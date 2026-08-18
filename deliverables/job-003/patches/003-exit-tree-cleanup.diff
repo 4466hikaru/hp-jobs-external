@@ -1,0 +1,14 @@
+# 挙動を変えない: 生存中の戦闘式は触らない。破棄時に time_scale を 1 へ戻し、hover 信号の二重接続だけ防ぐ。
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -3186,6 +3186,10 @@ func _audio_setup() -> void:
+ 
+ 
+ func _exit_tree() -> void:
++	_restore_hit_stop_time_scale()
++	var hover_observer: Node = get_node_or_null("/root/UiHoverRuntime")
++	if hover_observer != null and hover_observer.is_connected("ui_hover_sound_requested", _on_ui_hover_sound_requested):
++		hover_observer.disconnect("ui_hover_sound_requested", _on_ui_hover_sound_requested)
+ 	if audio_voice_playback != null:
+ 		audio_voice_playback.stop()
+ 	for player_value in audio_bgm_players + audio_se_players:
