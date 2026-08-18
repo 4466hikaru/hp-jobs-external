@@ -1,6 +1,6 @@
 # job-001: ブラウザミニゲーム「門まで帰るだけ」
 
-- status: open
+- status: in-progress(game)
 - 種別: 販促用ミニゲーム試作(全年齢)
 - 納品先: deliverables/job-001/
 
