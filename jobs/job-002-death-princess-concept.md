@@ -1,6 +1,6 @@
 # job-002: デスプリンセス コンセプトアート3案
 
-- status: open
+- status: in-progress(game)
 - 種別: キャラクターデザイン実力テスト(全年齢・コンセプト段階。製品採用は発注者側で別途判定)
 - 納品先: deliverables/job-002/
 
