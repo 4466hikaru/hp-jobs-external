@@ -1,6 +1,6 @@
 # job-004: UI 49画面の見た目総点検(ゴミ・ズレ・違和感の指摘出し)
 
-- status: open
+- status: in-progress(game)
 - 難度: 中(コード変更なし、目視レビューのみ)
 - 納品方法: A(branch `job/004` → PR)
 
