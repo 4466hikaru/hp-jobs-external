@@ -1,0 +1,28 @@
+# 挙動を変えない: JSON が正しいとき _content_items は同じ配列を返す。欠落時の [] 直参照クラッシュだけ避ける。
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -18618,8 +18618,8 @@ func _roll_upgrade_choices() -> Array:
+ func _available_upgrade_candidate_pool() -> Array:
+ 	var candidates := []
+ 	candidates.append_array(_available_recruit_choices())
+-	for upgrade in content["upgrades"]["upgradePool"]:
++	for upgrade in _content_items("upgrades", "upgradePool"):
+ 		var upgrade_id := str(upgrade["id"])
+ 		var current_rank := int(upgrade_ranks.get(upgrade_id, 0))
+ 		if current_rank < int(upgrade["maxRank"]) and _upgrade_is_available(upgrade):
+ 			candidates.append(upgrade)
+@@ -19340,12 +19340,12 @@ func _find_by_id(items: Array, item_id: String) -> Dictionary:
+ 	return {}
+ 
+ 
+ func _get_enemy_data(enemy_id: String) -> Dictionary:
+-	return _find_by_id(content["enemies"]["enemies"], enemy_id)
++	return _find_by_id(_content_items("enemies", "enemies"), enemy_id)
+ 
+ 
+ func _get_weapon_data(weapon_id: String) -> Dictionary:
+-	return _find_by_id(content["weapons"]["weapons"], weapon_id)
++	return _find_by_id(_content_items("weapons", "weapons"), weapon_id)
+ 
+ 
+ func _get_evolution_data(evolution_id: String) -> Dictionary:

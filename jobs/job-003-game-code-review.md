@@ -1,6 +1,6 @@
 # job-003: ゲーム本体コードの初見レビュー+改善提案
 
-- status: open
+- status: in-progress(game)
 - 種別: コードレビュー(読み取り中心。大規模書き換え禁止)
 - 対象: プライベートリポジトリ https://github.com/4466hikaru/hp-game-share (コードレビュー用ミラー。MIRROR_README.md を最初に読むこと)
 - 納品先: deliverables/job-003/ (このhp-jobs-externalリポジトリ側)

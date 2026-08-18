@@ -1,0 +1,24 @@
+# 挙動を変えない: message_label が既に存在する通常プレイでは同一。未構築時の null 参照だけ防ぐ。
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -22595,18 +22595,22 @@ func _legacy_clear_reward_text() -> String:
+ 
+ 
+ func _set_message(text: String, duration: float = 0.0) -> void:
++	if message_label == null:
++		return
+ 	message_label.text = text
+ 	message_timer = duration
+ 
+ 
+ func _update_message_timer(delta: float) -> void:
+ 	if message_timer <= 0.0:
+ 		return
+ 
+ 	message_timer = max(0.0, message_timer - delta)
+-	if message_timer == 0.0:
++	if message_timer == 0.0 and message_label != null:
+ 		message_label.text = ""
+ 
+ 
+ func _is_blocking_overlay_state() -> bool:
