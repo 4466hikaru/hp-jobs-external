@@ -1,6 +1,6 @@
 # job-009: 仕様書と実装コードの矛盾監査(初見の目)
 
-- status: open
+- status: in-progress(game)
 - 難度: 高(読解中心。コード変更なし)
 - 納品方法: A(branch `job/009` → PR)
 
