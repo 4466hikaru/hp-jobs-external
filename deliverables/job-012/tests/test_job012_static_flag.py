@@ -79,12 +79,8 @@ def main() -> int:
         if "_ui_staging_is_image2" in block:
             fail("save_load menu is gated by ui-staging; OFF would not match current path")
 
-    # This flag-only patch must not invent title/save image2 nodes.
+    # Flag + placement must not pull age_gate/confirm/legal parts into Main.gd.
     for forbidden in (
-        "Image2Backdrop",
-        "Image2Vignette",
-        "Image2MainMenuFrame",
-        "Image2SaveSlotFrame",
         "age_gate_frame_c128_v001",
         "confirm_modal_frame_c48_v001",
         "legal_scroll_frame_c48_v001",

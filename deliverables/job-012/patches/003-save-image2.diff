@@ -1,0 +1,145 @@
+diff --git a/game/scripts/main/Main.gd b/game/scripts/main/Main.gd
+index 91ae7fd..6b56b45 100644
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -9731,10 +9731,140 @@ func _show_approved_save_load_menu(slot_summary: Dictionary) -> bool:
+ 	# Make that authored affordance a real pointer target as well as retaining
+ 	# the shared keyboard/gamepad back handler.
+ 	_add_approved_ui_wiring_b1_hotspot(view, "ui_wiring_b1_save_load_back", Rect2(48.0, 625.0, 190.0, 76.0), Callable(self, "_return_from_save_load_menu"), false, &"back", "戻る")
++	if _cmdline_has_flag("--ui-staging=image2"):
++		_apply_image2_save_select_layout(view, action, slot_state)
+ 	_focus_approved_ui_wiring_b1_button(action)
+ 	return true
+ 
+ 
++func _apply_image2_save_select_layout(view: Control, action: Button, slot_state: String) -> void:
++	# image2 save-select placement. Coordinates are 1x (1280x720) from
++	# PIL/numpy gold/ruby/iron-plate detection on comp 05_save.png (1280x720).
++	# 2x textures are placed onto these 1x rects. OFF path never calls this.
++	if view == null:
++		return
++	var background := view.get_node_or_null("ApprovedStaticBackground") as TextureRect
++	var slot_tex := _image2_save_part_texture("save_slot_frame_c32_v001.png")
++	if slot_tex != null:
++		var slot := NinePatchRect.new()
++		slot.name = "ui_image2_save_slot_frame_01"
++		slot.texture = slot_tex
++		# _c32 = 32px corner on the 2x asset (2380x390). Content-to-edge 16px at 2x.
++		slot.patch_margin_left = 32
++		slot.patch_margin_top = 32
++		slot.patch_margin_right = 32
++		slot.patch_margin_bottom = 32
++		slot.axis_stretch_horizontal = NinePatchRect.AXIS_STRETCH_MODE_STRETCH
++		slot.axis_stretch_vertical = NinePatchRect.AXIS_STRETCH_MODE_STRETCH
++		# comp 05_save.png: slot0 gold CC left/top/right/bottom at
++		# x=48 (vertical gold y=218-394 count=177), y=213 (top bar gold=1119),
++		# x=1229 (right vertical gold y=217-394 count=178), y=398 (bottom bar gold=1176)
++		# -> 1182x186. 2x asset half is 1190x195; dest uses measured gold box.
++		slot.position = Vector2(48.0, 213.0)
++		slot.size = Vector2(1182.0, 186.0)
++		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
++		view.add_child(slot)
++		if background != null:
++			view.move_child(slot, background.get_index() + 1)
++	var back := view.get_node_or_null("ui_wiring_b1_save_load_back") as Button
++	# Back: iron plate CC (52,632)-(222,689) = 171x58. Plate lum~20 starts y=636
++	# at x=52 (RGBA 25,17,12) through x=222. Existing hotspot was (48,625,190,76).
++	_image2_place_save_part_button(back, "iron", Rect2(52.0, 632.0, 171.0, 58.0))
++	var delete_disabled := slot_state == SAVE_SLOT_STATE_EMPTY
++	var delete_btn := _add_approved_ui_wiring_b1_hotspot(
++		view,
++		"ui_image2_save_delete",
++		Rect2(956.0, 318.0, 229.0, 54.0),
++		Callable(self, "_transition_to_save_delete_confirm").bind(save_load_return_target),
++		delete_disabled,
++		&"danger",
++		_localized_text("ui.save_load.delete")
++	)
++	if delete_btn != null:
++		delete_btn.text = _localized_text("ui.save_load.delete")
++		# Delete: iron plate CC (956,318)-(1184,371)=229x54. Top gold y=317
++		# (133 gold px in x=930-1210). Bottom plate y=371, lum drop at y=372.
++		_image2_place_save_part_button(delete_btn, "iron", Rect2(956.0, 318.0, 229.0, 54.0))
++	if action != null:
++		if slot_state == SAVE_SLOT_STATE_EMPTY:
++			# New game: iron plate CC (510,543)-(769,608)=260x66. Gold left x=508
++			# / right x=770 at y=560-590; top gold y=542; bottom gold y=607 (231 px).
++			_image2_place_save_part_button(action, "iron", Rect2(510.0, 543.0, 260.0, 66.0))
++		elif slot_state == SAVE_SLOT_STATE_CORRUPT:
++			# 仮決め: corrupt action stays the existing 戻る label, iron chrome
++			# at the measured new-game plate so it does not stack on the back hit.
++			_image2_place_save_part_button(action, "iron", Rect2(510.0, 543.0, 260.0, 66.0))
++		else:
++			# Load / focus: ruby left at x=954 (ruby CC x=954-960, y=260-289),
++			# top gold/ruby y=240-243 (y=241 gold=171, y=243 ruby=214),
++			# bottom gold y=298-299 (y=299 gold=72, lum=154.8), right gold/ruby
++			# x=1180-1184 (y=241 gold ends x=1180). Dest 230x60 on 1x.
++			_image2_place_save_part_button(action, "ruby", Rect2(954.0, 240.0, 230.0, 60.0))
++			# Comp 05_save.png also has 新規ゲーム under the slot while slot 1 is
++			# populated. Bind the existing new-game callback; do not invent a flow.
++			var new_game := _add_approved_ui_wiring_b1_hotspot(
++				view,
++				"ui_image2_save_new_game",
++				Rect2(510.0, 543.0, 260.0, 66.0),
++				Callable(self, "_start_new_game_from_save_load"),
++				false,
++				&"action",
++				_localized_text("ui.save_load.new_game")
++			)
++			if new_game != null:
++				new_game.text = _localized_text("ui.save_load.new_game")
++				_image2_place_save_part_button(new_game, "iron", Rect2(510.0, 543.0, 260.0, 66.0))
++
++
++func _image2_save_part_texture(file_name: String) -> Texture2D:
++	# Filenames match materials/ui_parts_batch1_image2 exactly.
++	# Directory follows the existing image2_parts/final convention
++	# (UiBackdropLayer startup_backdrop_v001.png).
++	return _load_image_texture("res://assets/ui/image2_parts/final/%s" % file_name)
++
++
++func _image2_place_save_part_button(button: Button, family: String, rect: Rect2) -> void:
++	if button == null:
++		return
++	button.position = rect.position
++	button.size = rect.size
++	button.flat = false
++	button.focus_mode = Control.FOCUS_ALL
++	var normal_name := "ruby_primary_button_normal_v001.png" if family == "ruby" else "iron_secondary_button_normal_v001.png"
++	var focus_name := "ruby_primary_button_focus_v001.png" if family == "ruby" else "iron_secondary_button_focus_v001.png"
++	var normal := _image2_save_part_style(_image2_save_part_texture(normal_name))
++	var focus := _image2_save_part_style(_image2_save_part_texture(focus_name))
++	if normal == null and focus == null:
++		return
++	if normal == null:
++		normal = focus
++	if focus == null:
++		focus = normal
++	button.add_theme_stylebox_override("normal", normal)
++	button.add_theme_stylebox_override("hover", focus)
++	button.add_theme_stylebox_override("focus", focus)
++	button.add_theme_stylebox_override("pressed", focus)
++	button.add_theme_stylebox_override("disabled", normal)
++	button.modulate = Color.WHITE
++
++
++func _image2_save_part_style(texture: Texture2D) -> StyleBoxTexture:
++	if texture == null:
++		return null
++	var style := StyleBoxTexture.new()
++	style.texture = texture
++	style.draw_center = true
++	# 2x assets: content-to-edge margin 16px. Place the 2x texture on a 1x rect.
++	style.texture_margin_left = 16.0
++	style.texture_margin_top = 16.0
++	style.texture_margin_right = 16.0
++	style.texture_margin_bottom = 16.0
++	style.content_margin_left = 8.0
++	style.content_margin_top = 8.0
++	style.content_margin_right = 8.0
++	style.content_margin_bottom = 8.0
++	return style
++
+ func _show_approved_stage_select() -> bool:
+ 	var stage_cards: Array = []
+ 	var stage_ids: Array = []

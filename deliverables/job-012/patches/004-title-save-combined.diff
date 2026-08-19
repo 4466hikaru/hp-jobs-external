@@ -1,0 +1,441 @@
+diff --git a/game/scripts/main/Main.gd b/game/scripts/main/Main.gd
+index bf34c5a..6b56b45 100644
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -15,6 +15,7 @@ const UiHoverConfig := preload("res://scripts/ui/UiHoverConfig.gd")
+ const UiScreenRegistry := preload("res://scripts/ui/UiScreenRegistry.gd")
+ const UiBackdropLayer := preload("res://scripts/ui/UiBackdropLayer.gd")
+ const Stage4MassBatch1 := preload("res://scripts/ui/Stage4MassBatch1.gd")
++const TitleImage2Layout := preload("res://scripts/ui/TitleImage2Layout.gd")
+ const Stage4MassBatch2 := preload("res://scripts/ui/Stage4MassBatch2.gd")
+ const Stage4MassBatch3 := preload("res://scripts/ui/Stage4MassBatch3.gd")
+ const Stage4MassBatch4 := preload("res://scripts/ui/Stage4MassBatch4.gd")
+@@ -6945,6 +6946,8 @@ func _show_title_menu() -> void:
+ 	_clear_runtime_entities()
+ 	var slot_summary: Dictionary = _save_load_slot_summary()
+ 	var slot_state: String = str(slot_summary.get("state", SAVE_SLOT_STATE_EMPTY))
++	if TitleImage2Layout.is_enabled() and _show_title_image2_menu(slot_summary):
++		return
+ 	if USE_APPROVED_UI_WIRING_B1 and _show_approved_title_menu(slot_summary):
+ 		return
+ 	_show_menu_shell(_localized_text("ui.boot_splash.title"), _localized_text("ui.title.tagline"), true)
+@@ -9610,6 +9613,38 @@ func _show_approved_title_menu(slot_summary: Dictionary) -> bool:
+ 	return true
+ 
+ 
++func _show_title_image2_menu(slot_summary: Dictionary) -> bool:
++	var can_continue := str(slot_summary.get("state", SAVE_SLOT_STATE_EMPTY)) == SAVE_SLOT_STATE_READY
++	var view := TitleImage2Layout.build_view({
++		"title": _localized_text("ui.boot_splash.title"),
++		"subtitle": _localized_text("ui.title.tagline"),
++		"actions": [
++			_localized_text("ui.title.new_game"),
++			_localized_text("ui.title.continue"),
++			_localized_text("ui.save_load.menu_button"),
++			"設定",
++			"クレジット",
++		],
++		"disabled": [false, not can_continue, false, false, false],
++	})
++	if not _install_approved_ui_wiring_b1_view(&"title", view):
++		return false
++	var new_game := _bind_approved_ui_wiring_b1_action(view, TitleImage2Layout.action_node_name(0), Callable(self, "_on_title_new_game_pressed"))
++	_bind_approved_ui_wiring_b1_action(view, TitleImage2Layout.action_node_name(1), Callable(self, "_continue_from_title"), not can_continue)
++	_bind_approved_ui_wiring_b1_action(view, TitleImage2Layout.action_node_name(2), Callable(self, "_transition_to_save_load_menu").bind("title"))
++	_bind_approved_ui_wiring_b1_action(view, TitleImage2Layout.action_node_name(3), Callable(self, "_transition_to_options").bind("title"))
++	_bind_approved_ui_wiring_b1_action(view, TitleImage2Layout.action_node_name(4), Callable(self, "_on_title_credits_pressed"))
++	_add_battle_profile_dev_selector(view)
++	_focus_approved_ui_wiring_b1_button(new_game)
++	return true
++
++
++func _on_title_credits_pressed() -> void:
++	_transition_to_credits_license()
++	# _transition_to_credits_license clears this; restore so title can return here.
++	credits_return_to_title = true
++
++
+ func _add_battle_profile_dev_selector(view: Control) -> void:
+ 	if view == null or not _dev_features_enabled():
+ 		return
+@@ -9696,10 +9731,140 @@ func _show_approved_save_load_menu(slot_summary: Dictionary) -> bool:
+ 	# Make that authored affordance a real pointer target as well as retaining
+ 	# the shared keyboard/gamepad back handler.
+ 	_add_approved_ui_wiring_b1_hotspot(view, "ui_wiring_b1_save_load_back", Rect2(48.0, 625.0, 190.0, 76.0), Callable(self, "_return_from_save_load_menu"), false, &"back", "戻る")
++	if _cmdline_has_flag("--ui-staging=image2"):
++		_apply_image2_save_select_layout(view, action, slot_state)
+ 	_focus_approved_ui_wiring_b1_button(action)
+ 	return true
+ 
+ 
++func _apply_image2_save_select_layout(view: Control, action: Button, slot_state: String) -> void:
++	# image2 save-select placement. Coordinates are 1x (1280x720) from
++	# PIL/numpy gold/ruby/iron-plate detection on comp 05_save.png (1280x720).
++	# 2x textures are placed onto these 1x rects. OFF path never calls this.
++	if view == null:
++		return
++	var background := view.get_node_or_null("ApprovedStaticBackground") as TextureRect
++	var slot_tex := _image2_save_part_texture("save_slot_frame_c32_v001.png")
++	if slot_tex != null:
++		var slot := NinePatchRect.new()
++		slot.name = "ui_image2_save_slot_frame_01"
++		slot.texture = slot_tex
++		# _c32 = 32px corner on the 2x asset (2380x390). Content-to-edge 16px at 2x.
++		slot.patch_margin_left = 32
++		slot.patch_margin_top = 32
++		slot.patch_margin_right = 32
++		slot.patch_margin_bottom = 32
++		slot.axis_stretch_horizontal = NinePatchRect.AXIS_STRETCH_MODE_STRETCH
++		slot.axis_stretch_vertical = NinePatchRect.AXIS_STRETCH_MODE_STRETCH
++		# comp 05_save.png: slot0 gold CC left/top/right/bottom at
++		# x=48 (vertical gold y=218-394 count=177), y=213 (top bar gold=1119),
++		# x=1229 (right vertical gold y=217-394 count=178), y=398 (bottom bar gold=1176)
++		# -> 1182x186. 2x asset half is 1190x195; dest uses measured gold box.
++		slot.position = Vector2(48.0, 213.0)
++		slot.size = Vector2(1182.0, 186.0)
++		slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
++		view.add_child(slot)
++		if background != null:
++			view.move_child(slot, background.get_index() + 1)
++	var back := view.get_node_or_null("ui_wiring_b1_save_load_back") as Button
++	# Back: iron plate CC (52,632)-(222,689) = 171x58. Plate lum~20 starts y=636
++	# at x=52 (RGBA 25,17,12) through x=222. Existing hotspot was (48,625,190,76).
++	_image2_place_save_part_button(back, "iron", Rect2(52.0, 632.0, 171.0, 58.0))
++	var delete_disabled := slot_state == SAVE_SLOT_STATE_EMPTY
++	var delete_btn := _add_approved_ui_wiring_b1_hotspot(
++		view,
++		"ui_image2_save_delete",
++		Rect2(956.0, 318.0, 229.0, 54.0),
++		Callable(self, "_transition_to_save_delete_confirm").bind(save_load_return_target),
++		delete_disabled,
++		&"danger",
++		_localized_text("ui.save_load.delete")
++	)
++	if delete_btn != null:
++		delete_btn.text = _localized_text("ui.save_load.delete")
++		# Delete: iron plate CC (956,318)-(1184,371)=229x54. Top gold y=317
++		# (133 gold px in x=930-1210). Bottom plate y=371, lum drop at y=372.
++		_image2_place_save_part_button(delete_btn, "iron", Rect2(956.0, 318.0, 229.0, 54.0))
++	if action != null:
++		if slot_state == SAVE_SLOT_STATE_EMPTY:
++			# New game: iron plate CC (510,543)-(769,608)=260x66. Gold left x=508
++			# / right x=770 at y=560-590; top gold y=542; bottom gold y=607 (231 px).
++			_image2_place_save_part_button(action, "iron", Rect2(510.0, 543.0, 260.0, 66.0))
++		elif slot_state == SAVE_SLOT_STATE_CORRUPT:
++			# 仮決め: corrupt action stays the existing 戻る label, iron chrome
++			# at the measured new-game plate so it does not stack on the back hit.
++			_image2_place_save_part_button(action, "iron", Rect2(510.0, 543.0, 260.0, 66.0))
++		else:
++			# Load / focus: ruby left at x=954 (ruby CC x=954-960, y=260-289),
++			# top gold/ruby y=240-243 (y=241 gold=171, y=243 ruby=214),
++			# bottom gold y=298-299 (y=299 gold=72, lum=154.8), right gold/ruby
++			# x=1180-1184 (y=241 gold ends x=1180). Dest 230x60 on 1x.
++			_image2_place_save_part_button(action, "ruby", Rect2(954.0, 240.0, 230.0, 60.0))
++			# Comp 05_save.png also has 新規ゲーム under the slot while slot 1 is
++			# populated. Bind the existing new-game callback; do not invent a flow.
++			var new_game := _add_approved_ui_wiring_b1_hotspot(
++				view,
++				"ui_image2_save_new_game",
++				Rect2(510.0, 543.0, 260.0, 66.0),
++				Callable(self, "_start_new_game_from_save_load"),
++				false,
++				&"action",
++				_localized_text("ui.save_load.new_game")
++			)
++			if new_game != null:
++				new_game.text = _localized_text("ui.save_load.new_game")
++				_image2_place_save_part_button(new_game, "iron", Rect2(510.0, 543.0, 260.0, 66.0))
++
++
++func _image2_save_part_texture(file_name: String) -> Texture2D:
++	# Filenames match materials/ui_parts_batch1_image2 exactly.
++	# Directory follows the existing image2_parts/final convention
++	# (UiBackdropLayer startup_backdrop_v001.png).
++	return _load_image_texture("res://assets/ui/image2_parts/final/%s" % file_name)
++
++
++func _image2_place_save_part_button(button: Button, family: String, rect: Rect2) -> void:
++	if button == null:
++		return
++	button.position = rect.position
++	button.size = rect.size
++	button.flat = false
++	button.focus_mode = Control.FOCUS_ALL
++	var normal_name := "ruby_primary_button_normal_v001.png" if family == "ruby" else "iron_secondary_button_normal_v001.png"
++	var focus_name := "ruby_primary_button_focus_v001.png" if family == "ruby" else "iron_secondary_button_focus_v001.png"
++	var normal := _image2_save_part_style(_image2_save_part_texture(normal_name))
++	var focus := _image2_save_part_style(_image2_save_part_texture(focus_name))
++	if normal == null and focus == null:
++		return
++	if normal == null:
++		normal = focus
++	if focus == null:
++		focus = normal
++	button.add_theme_stylebox_override("normal", normal)
++	button.add_theme_stylebox_override("hover", focus)
++	button.add_theme_stylebox_override("focus", focus)
++	button.add_theme_stylebox_override("pressed", focus)
++	button.add_theme_stylebox_override("disabled", normal)
++	button.modulate = Color.WHITE
++
++
++func _image2_save_part_style(texture: Texture2D) -> StyleBoxTexture:
++	if texture == null:
++		return null
++	var style := StyleBoxTexture.new()
++	style.texture = texture
++	style.draw_center = true
++	# 2x assets: content-to-edge margin 16px. Place the 2x texture on a 1x rect.
++	style.texture_margin_left = 16.0
++	style.texture_margin_top = 16.0
++	style.texture_margin_right = 16.0
++	style.texture_margin_bottom = 16.0
++	style.content_margin_left = 8.0
++	style.content_margin_top = 8.0
++	style.content_margin_right = 8.0
++	style.content_margin_bottom = 8.0
++	return style
++
+ func _show_approved_stage_select() -> bool:
+ 	var stage_cards: Array = []
+ 	var stage_ids: Array = []
+diff --git a/game/scripts/ui/TitleImage2Layout.gd b/game/scripts/ui/TitleImage2Layout.gd
+new file mode 100644
+index 0000000..52bf5ab
+--- /dev/null
++++ b/game/scripts/ui/TitleImage2Layout.gd
+@@ -0,0 +1,234 @@
++class_name TitleImage2Layout
++
++## Title (03_title) image2 staging placement.
++## Active only when the process already has --ui-staging=image2 (game writes the flag).
++## Coordinates are 1280x720 1x pixels measured with PIL from
++## /workspace/redraw/ideal0819/03_title.png. Comments cite those px numbers.
++
++const STAGING_FLAG := "--ui-staging=image2"
++const VIEWPORT_SIZE := Vector2(1280.0, 720.0)
++const PARTS_DIR := "res://assets/ui/ui_parts_batch1_image2/"
++const LEGACY_BACKDROP_PATH := "res://assets/ui/image2_parts/final/startup_backdrop_v001.png"
++const ZEN_KAKU_GOTHIC_NEW_BOLD := preload("res://assets/fonts/ZenKakuGothicNew-Bold.ttf")
++
++# startup_backdrop_v001.png is 2560x1440 (2x). Load onto the 1x viewport 1280x720.
++const BACKDROP_RECT := Rect2(0.0, 0.0, 1280.0, 720.0)
++# startup_vignette_v001.png is 2560x1440 (2x). Alpha>8 content inset 17px @2x.
++const VIGNETTE_RECT := Rect2(0.0, 0.0, 1280.0, 720.0)
++
++# main_menu_frame_c48_v001.png is 1200x600 with patch 48 in texture px (2x basis).
++# Godot NinePatchRect.patch_margin_* is texture-space, so 48 (not 24).
++# Dest is half the texture: 600x300. Material alpha>8 inset is 16px @2x -> 8px @1x.
++# Mockup plaque: crown lum>60 y=19..79 x=501..777; burgundy well x=354..924 y=63..275
++# (571x213). Centered dest x=(1280-600)/2=340, y=16 so crown sits on measured y=19.
++const FRAME_RECT := Rect2(340.0, 16.0, 600.0, 300.0)
++const FRAME_PATCH := 48
++const FRAME_CONTENT_PAD_1X := 8.0
++
++# Wordmark well inside the plaque. Mockup ヘルプリンセス glyphs sit in the
++# burgundy interior (x=354..924 y=63..275). Keep text code-drawn; do not bake.
++const TITLE_WORDMARK_RECT := Rect2(400.0, 88.0, 480.0, 72.0)
++# Subtitle 地獄の王女達 / ui.title.tagline: PIL band y=200..279 around x=480..799.
++const TITLE_SUBTITLE_RECT := Rect2(470.0, 200.0, 340.0, 28.0)
++
++# Five left-stack items. PIL lum>70 bands (x restricted 0..360):
++#   1 はじめから   y=375..411 x=28..  (focus chrome + diamonds + underline y=410..411)
++#   2 つづきから   y=425..454 x=75..264 (lum>100)
++#   3 セーブ／ロード y=479..506 x=75..
++#   4 設定         y=534..557 x=37..256 (lum>100)
++#   5 クレジット   y=586..611 x=77..
++# Pitch ~52px. Shared column x=28 w=264 from item1 chrome left (diamond @x=28)
++# and item1 lum>80 right 292. Dest h=40 so 2x ruby 500x139 is not forced to 1x
++# 250x70 (that would overlap the 52px pitch; mockup wins).
++const BUTTON_RECTS: Array[Rect2] = [
++	Rect2(28.0, 376.0, 264.0, 40.0),
++	Rect2(28.0, 428.0, 264.0, 40.0),
++	Rect2(28.0, 480.0, 264.0, 40.0),
++	Rect2(28.0, 532.0, 264.0, 40.0),
++	Rect2(28.0, 584.0, 264.0, 40.0),
++]
++const BUTTON_FONT_SIZE := 20
++const BUTTON_COLOR_NORMAL := Color("efe7d2")
++const BUTTON_COLOR_FOCUS := Color("fff4f0")
++const BUTTON_COLOR_DISABLED := Color("827d72")
++
++# Footer 決定/戻る: PIL lum>80 x=27..165 y=684..699 (139x16). Existing prompt
++# chrome — do not invent icon assets. Recorded only; not placed by this helper.
++const FOOTER_HINT_RECT := Rect2(27.0, 684.0, 139.0, 16.0)
++
++const ACTION_NODE_PREFIX := "ui_text_title_main_actions_"
++
++
++static func is_enabled() -> bool:
++	return _cmdline_has_flag(STAGING_FLAG)
++
++
++static func build_view(state: Dictionary = {}) -> Control:
++	var view := Control.new()
++	view.name = "TitleImage2Layout"
++	view.position = Vector2.ZERO
++	view.size = VIEWPORT_SIZE
++	view.mouse_filter = Control.MOUSE_FILTER_STOP
++	view.set_meta("ui_staging", "image2")
++	view.set_meta("ui_staging_screen", "title")
++
++	_add_texture_layer(view, "StartupBackdrop", _load_part("startup_backdrop_v001.png", LEGACY_BACKDROP_PATH), BACKDROP_RECT, TextureRect.STRETCH_KEEP_ASPECT_COVERED)
++	_add_texture_layer(view, "StartupVignette", _load_part("startup_vignette_v001.png"), VIGNETTE_RECT, TextureRect.STRETCH_KEEP_ASPECT_COVERED)
++	_add_frame_layer(view)
++	_add_label(view, "TitleWordmark", str(state.get("title", "")), TITLE_WORDMARK_RECT, 36, HORIZONTAL_ALIGNMENT_CENTER, Color("f5d47b"))
++	_add_label(view, "TitleSubtitle", str(state.get("subtitle", "")), TITLE_SUBTITLE_RECT, 16, HORIZONTAL_ALIGNMENT_CENTER, Color("efe7d2"))
++
++	var actions: Array = state.get("actions", []) as Array
++	var disabled_flags: Array = state.get("disabled", []) as Array
++	var ruby_focus := _load_part("ruby_primary_button_focus_v001.png")
++	var ruby_normal := _load_part("ruby_primary_button_normal_v001.png")
++	for index in range(BUTTON_RECTS.size()):
++		var label_text := str(actions[index]) if index < actions.size() else ""
++		var disabled := bool(disabled_flags[index]) if index < disabled_flags.size() else false
++		_add_action_button(view, index, label_text, disabled, ruby_focus, ruby_normal)
++	return view
++
++
++static func action_node_name(index: int) -> String:
++	return "%s%02d" % [ACTION_NODE_PREFIX, index + 1]
++
++
++static func _add_frame_layer(view: Control) -> void:
++	var texture := _load_part("main_menu_frame_c48_v001.png")
++	if texture == null:
++		return
++	var frame := NinePatchRect.new()
++	frame.name = "MainMenuFrame"
++	frame.texture = texture
++	frame.position = FRAME_RECT.position
++	frame.size = FRAME_RECT.size
++	# patch 48 is texture-space (2x). Dest 600x300 is 1x half-size, so the
++	# unique plaque does not stretch. Content pad 8px @1x (16px @2x).
++	frame.patch_margin_left = FRAME_PATCH
++	frame.patch_margin_top = FRAME_PATCH
++	frame.patch_margin_right = FRAME_PATCH
++	frame.patch_margin_bottom = FRAME_PATCH
++	frame.axis_stretch_horizontal = NinePatchRect.AXIS_STRETCH_MODE_STRETCH
++	frame.axis_stretch_vertical = NinePatchRect.AXIS_STRETCH_MODE_STRETCH
++	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	view.add_child(frame)
++
++
++static func _add_texture_layer(view: Control, node_name: String, texture: Texture2D, rect: Rect2, stretch: TextureRect.StretchMode) -> void:
++	if texture == null:
++		return
++	var layer := TextureRect.new()
++	layer.name = node_name
++	layer.texture = texture
++	layer.position = rect.position
++	layer.size = rect.size
++	layer.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
++	layer.stretch_mode = stretch
++	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	view.add_child(layer)
++
++
++static func _add_label(view: Control, node_name: String, text: String, rect: Rect2, font_size: int, alignment: HorizontalAlignment, color: Color) -> void:
++	var label := Label.new()
++	label.name = node_name
++	label.position = rect.position
++	label.size = rect.size
++	label.text = text
++	label.horizontal_alignment = alignment
++	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
++	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	label.add_theme_font_override(&"font", ZEN_KAKU_GOTHIC_NEW_BOLD)
++	label.add_theme_font_size_override(&"font_size", font_size)
++	label.add_theme_color_override(&"font_color", color)
++	label.add_theme_color_override(&"font_outline_color", Color("080b0e"))
++	label.add_theme_constant_override(&"outline_size", 3)
++	view.add_child(label)
++
++
++static func _add_action_button(view: Control, index: int, text: String, disabled: bool, ruby_focus: Texture2D, ruby_normal: Texture2D) -> Button:
++	var rect := BUTTON_RECTS[index]
++	var button := Button.new()
++	button.name = action_node_name(index)
++	button.position = rect.position
++	button.size = rect.size
++	button.text = text
++	button.flat = true
++	button.disabled = disabled
++	button.focus_mode = Control.FOCUS_NONE if disabled else Control.FOCUS_ALL
++	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
++	button.autowrap_mode = TextServer.AUTOWRAP_OFF
++	button.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
++	button.clip_text = false
++	button.add_theme_font_override(&"font", ZEN_KAKU_GOTHIC_NEW_BOLD)
++	button.add_theme_font_size_override(&"font_size", BUTTON_FONT_SIZE)
++	button.add_theme_color_override(&"font_color", BUTTON_COLOR_DISABLED if disabled else BUTTON_COLOR_NORMAL)
++	button.add_theme_color_override(&"font_hover_color", BUTTON_COLOR_FOCUS)
++	button.add_theme_color_override(&"font_pressed_color", BUTTON_COLOR_FOCUS)
++	button.add_theme_color_override(&"font_focus_color", BUTTON_COLOR_FOCUS)
++	button.add_theme_color_override(&"font_disabled_color", BUTTON_COLOR_DISABLED)
++	button.add_theme_color_override(&"font_outline_color", Color("080b0e"))
++	button.add_theme_constant_override(&"outline_size", 3)
++	# Mockup normal rows are unframed gold/grey text. Do not force iron_secondary.
++	var empty := StyleBoxEmpty.new()
++	button.add_theme_stylebox_override("normal", empty)
++	button.add_theme_stylebox_override("disabled", empty)
++	var focus_style := _ruby_style(ruby_focus if ruby_focus != null else ruby_normal)
++	if focus_style != null:
++		button.add_theme_stylebox_override("focus", focus_style)
++		button.add_theme_stylebox_override("hover", focus_style)
++		button.add_theme_stylebox_override("pressed", focus_style)
++	else:
++		button.add_theme_stylebox_override("focus", empty)
++		button.add_theme_stylebox_override("hover", empty)
++		button.add_theme_stylebox_override("pressed", empty)
++	button.set_meta("title_image2_action_index", index)
++	view.add_child(button)
++	return button
++
++
++static func _ruby_style(texture: Texture2D) -> StyleBoxTexture:
++	if texture == null:
++		return null
++	var style := StyleBoxTexture.new()
++	style.texture = texture
++	# Buttons are not _cN. Stretch the 2x 500px art onto the measured 264x40 dest.
++	style.texture_margin_left = 0.0
++	style.texture_margin_top = 0.0
++	style.texture_margin_right = 0.0
++	style.texture_margin_bottom = 0.0
++	style.content_margin_left = 16.0
++	style.content_margin_top = 4.0
++	style.content_margin_right = 16.0
++	style.content_margin_bottom = 4.0
++	style.draw_center = true
++	return style
++
++
++static func _load_part(filename: String, fallback_path: String = "") -> Texture2D:
++	var texture := _load_texture(PARTS_DIR + filename)
++	if texture != null:
++		return texture
++	if fallback_path != "":
++		return _load_texture(fallback_path)
++	return null
++
++
++static func _load_texture(resource_path: String) -> Texture2D:
++	var packaged := load(resource_path) as Texture2D
++	if packaged != null:
++		return packaged
++	var image := Image.load_from_file(ProjectSettings.globalize_path(resource_path))
++	if image == null or image.is_empty():
++		return null
++	image.convert(Image.FORMAT_RGBA8)
++	return ImageTexture.create_from_image(image)
++
++
++static func _cmdline_has_flag(flag: String) -> bool:
++	for arg in OS.get_cmdline_args():
++		if str(arg) == flag:
++			return true
++	for arg in OS.get_cmdline_user_args():
++		if str(arg) == flag:
++			return true
++	return false
