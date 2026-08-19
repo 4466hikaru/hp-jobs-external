@@ -1,0 +1,58 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10692,6 +10692,21 @@
+ 		call_deferred("_grab_focus_if_available", button)
+ 
+ 
++func _keep_approved_shop_row_focus_only(button: Button) -> void:
++	# B3 shop rows sit on an approved raster that already has a gold selected
++	# well. Godot theme hover + UiHoverOverlay pointer glow then draw a second
++	# frame on a different row (job-004: 1行目金 / 2行目赤). Keep focus only.
++	if button == null:
++		return
++	var empty := StyleBoxEmpty.new()
++	button.add_theme_stylebox_override("normal", empty)
++	button.add_theme_stylebox_override("hover", empty)
++	button.add_theme_stylebox_override("pressed", empty)
++	button.add_theme_stylebox_override("disabled", empty)
++	button.add_theme_stylebox_override("focus", empty)
++	button.set_meta("ui_hover_suppress_hover_draw", true)
++
++
+ func _show_approved_b3_region_menu(region: Dictionary) -> bool:
+ 	var region_id := str(region.get("id", ""))
+ 	var town := _b3_town_for_region(region_id)
+@@ -10767,6 +10782,7 @@
+ 		var entry := entries[index] as Dictionary
+ 		var item: Dictionary = entry["item"] as Dictionary
+ 		var row := _add_approved_ui_wiring_b3_hotspot(view, "ui_wiring_b3_shop_row_%02d" % (index + 1), Rect2(40.0, 110.0 + 125.0 * index, 790.0, 115.0), Callable(self, "_buy_shop_item").bind(shop_id, return_town_id, str(item.get("id", ""))), bool(entry["disabled"]), &"row", rows[index])
++		_keep_approved_shop_row_focus_only(row)
+ 		if first == null and row != null and not row.disabled:
+ 			first = row
+ 	var buy_callback := Callable(self, "_buy_shop_item").bind(shop_id, return_town_id, str(selected_item.get("id", "")))
+--- a/game/scripts/ui/UiHoverOverlay.gd
++++ b/game/scripts/ui/UiHoverOverlay.gd
+@@ -138,7 +138,13 @@
+ 	return false
+ 
+ 
++func _hover_draw_suppressed() -> bool:
++	return _control != null and bool(_control.get_meta("ui_hover_suppress_hover_draw", false))
++
++
+ func _on_mouse_entered() -> void:
++	if _hover_draw_suppressed():
++		return
+ 	_hovered = true
+ 	_request_hover_sound()
+ 	_refresh(true)
+@@ -218,7 +224,8 @@
+ 	if not _hovered and not _focused and not _pressed and _control.scale != _applied_scale:
+ 		_rest_scale = _control.scale
+ 	_screen_layer = Config.screen_layer_for_control(_control)
+-	var active := not _disabled and (_hovered or _focused)
++	var pointer_hover := _hovered and not _hover_draw_suppressed()
++	var active := not _disabled and (pointer_hover or _focused)
+ 	var profile := Config.profile_for(_role, _screen_layer)
+ 	var target_factor := 1.0
+ 	if active:
