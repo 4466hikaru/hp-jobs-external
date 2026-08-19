@@ -1,0 +1,46 @@
+--- a/game/scripts/ui/Stage4MassBatch3.gd
++++ b/game/scripts/ui/Stage4MassBatch3.gd
+@@ -81,7 +81,7 @@
+ 	"dungeon_info": {
+ 		"strategy": "approved_component_cards", "background": "res://assets/ui/ui_mass_batch3_v2/dungeon_info_approved_dynamic_clean_v002.png", "approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/26_ダンジョン出発確認.png",
+ 		"components": [{"id": "title_band", "source_rect": [8, 8, 410, 72], "target_rect": [8, 8, 410, 72], "clear_rects": []}, {"id": "condition_panel", "source_rect": [440, 98, 500, 200], "target_rect": [440, 98, 500, 200], "clear_rects": []}, {"id": "reward_panel", "source_rect": [440, 295, 500, 335], "target_rect": [440, 295, 500, 335], "clear_rects": []}, {"id": "action_button", "source_rect": [945, 560, 330, 130], "target_rect": [945, 560, 330, 130], "clear_rects": []}],
+-		"regions": [{"id": "dungeon_name", "rect": [40, 24, 350, 40], "font_size": 22, "maximum": 18, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["title_band"]}, {"id": "conditions", "rect": [475, 120, 400, 150], "font_size": 15, "maximum": 24, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "slot_rects": [[475, 120, 400, 32], [475, 170, 400, 32], [475, 220, 400, 32]], "component_ids": ["condition_panel", "condition_panel", "condition_panel"]}, {"id": "reward_info", "rect": [475, 315, 400, 260], "font_size": 15, "maximum": 24, "rows": 2, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "slot_rects": [[475, 315, 400, 32], [475, 485, 400, 32]], "component_ids": ["reward_panel", "reward_panel"]}, {"id": "actions", "rect": [985, 610, 250, 50], "font_size": 15, "maximum": 24, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["action_button"]}],
++		"regions": [{"id": "dungeon_name", "rect": [40, 24, 350, 40], "font_size": 22, "maximum": 18, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["title_band"]}, {"id": "conditions", "rect": [520, 120, 380, 160], "font_size": 15, "maximum": 28, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "slot_rects": [[520, 120, 380, 32], [520, 170, 380, 32], [520, 214, 380, 56]], "component_ids": ["condition_panel", "condition_panel", "condition_panel"]}, {"id": "reward_info", "rect": [520, 315, 380, 260], "font_size": 15, "maximum": 48, "rows": 2, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "autowrap": true, "slot_rects": [[520, 315, 380, 72], [520, 485, 380, 48]], "component_ids": ["reward_panel", "reward_panel"]}, {"id": "actions", "rect": [985, 610, 250, 50], "font_size": 15, "maximum": 24, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["action_button"]}],
+ 		"default_state": {"dungeon_name": ["月影の礼拝堂　危険度 4"], "conditions": ["推奨戦力: 1,200", "帰還: ラウンド終了後", "注意: 敵が強力です"], "reward_info": ["報酬傾向: 月石", "希少装備を入手できることがあります"], "actions": ["この内容で出発する"]},
+ 		"longest_state": {"dungeon_name": ["月影の礼拝堂・最深部　危険度 10"], "conditions": ["推奨戦力: 9,999 以上", "帰還: 中間ラウンドで選択可能", "注意: 強力な敵と罠が出現します"], "reward_info": ["報酬傾向: 希少な月影装備", "最深部では特別な素材を入手できます"], "actions": ["この内容で出発する"]}, "static_decorations": []},
+ }
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10189,14 +10189,18 @@
+ 	var confirming_final_battle := is_final_battle and pending_final_battle_departure_dungeon_id == dungeon_id
+ 	var dungeon_rounds: Array = dungeon.get("rounds", []) as Array
+ 	var round_count := int(dungeon.get("roundCount", dungeon_rounds.size()))
+-	var reward_rows := _b2_live_lines(_dungeon_reward_summary(dungeon), 2)
++	var reward_summary := _dungeon_reward_summary(dungeon)
++	var reward_break := reward_summary.find(" / ")
++	if reward_break >= 0:
++		reward_summary = reward_summary.substr(0, reward_break) + "\n" + reward_summary.substr(reward_break + 3)
++	var reward_rows := _b2_live_lines(reward_summary, 2)
+ 	if reward_rows.is_empty():
+ 		reward_rows = ["報酬データなし", "帰還時は恒久引継 45%"]
+ 	var unlocked := _is_dungeon_entry_unlocked(dungeon)
+ 	var condition_lines := [
+ 		"地域: %s / 推奨 %d" % [_region_display_name(region), int(dungeon.get("recommendedPower", 1))],
+ 		"%dR　%s" % [round_count, format_time(float(dungeon.get("durationSeconds", 0.0)))],
+-		"帰還 45% / 続行で報酬 +10%/R",
++		"帰還 45%\n続行で報酬 +10%/R",
+ 	]
+ 	var action_label := "出発する"
+ 	if is_final_battle:
+@@ -10219,9 +10223,9 @@
+ 	# Overlay only the two missing live actions; scaling that complete panel per
+ 	# action would duplicate its borders and break the approved composition.
+ 	if confirming_final_battle:
+-		_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_dungeon_cancel_departure", Rect2(985.0, 570.0, 250.0, 30.0), "出撃を取り消す", Callable(self, "_cancel_final_battle_departure_confirmation"), false, &"back")
++		_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_dungeon_cancel_departure", Rect2(985.0, 562.0, 250.0, 26.0), "出撃を取り消す", Callable(self, "_cancel_final_battle_departure_confirmation"), false, &"back")
+ 	else:
+-		_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_dungeon_summon", Rect2(985.0, 570.0, 250.0, 30.0), "召喚石", Callable(self, "_transition_to_summon_select").bind("dungeon_info"))
++		_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_dungeon_summon", Rect2(985.0, 562.0, 250.0, 26.0), "召喚石", Callable(self, "_transition_to_summon_select").bind("dungeon_info"))
+ 	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_dungeon_back", Rect2(985.0, 650.0, 250.0, 30.0), "戻る", Callable(self, "_return_from_dungeon_info"), false, &"back")
+ 	_focus_approved_ui_wiring_b2_button(enter)
+ 	return true

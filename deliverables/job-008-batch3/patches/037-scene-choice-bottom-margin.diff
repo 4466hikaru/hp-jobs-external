@@ -1,0 +1,13 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -144,3 +144,4 @@
+ const ADV_DIALOGUE_MIN_HEIGHT := 176.0
+ const ADV_DIALOGUE_MAX_HEIGHT := 208.0
++const ADV_DIALOGUE_BOTTOM_MARGIN := 40.0
+ const ADV_DIALOGUE_CONTENT_PADDING := 32.0
+@@ -5153,3 +5154,3 @@ func _layout_ui(force: bool = false) -> void:
+-		if scene_dialogue_position.y + scene_dialogue_size.y > viewport_size.y - safe_margin:
+-			scene_dialogue_position.y = viewport_size.y - safe_margin - scene_dialogue_size.y
++		if scene_dialogue_position.y + scene_dialogue_size.y > viewport_size.y - ADV_DIALOGUE_BOTTOM_MARGIN:
++			scene_dialogue_position.y = viewport_size.y - ADV_DIALOGUE_BOTTOM_MARGIN - scene_dialogue_size.y
+ 		_layout_scene_adv_dialogue(scene_dialogue_position, scene_dialogue_size)

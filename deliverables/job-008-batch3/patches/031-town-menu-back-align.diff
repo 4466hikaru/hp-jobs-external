@@ -1,0 +1,18 @@
+--- a/game/scripts/ui/Stage4MassBatch3.gd
++++ b/game/scripts/ui/Stage4MassBatch3.gd
+@@ -27,13 +27,13 @@ const SCREEN_SPECS: Dictionary = {
+ 			{"id": "resources", "source_rect": [325, 92, 620, 55], "target_rect": [325, 92, 620, 55], "clear_rects": [[380, 105, 245, 30], [700, 105, 235, 30]], "clear_samples": [[620, 110, 3, 3], [925, 110, 3, 3]]},
+ 			{"id": "town_card_01", "source_rect": [245, 168, 245, 216], "target_rect": [245, 168, 245, 216], "clear_rects": [[270, 335, 195, 42]], "clear_samples": [[275, 355, 3, 3]]}, {"id": "town_card_02", "source_rect": [500, 164, 278, 222], "target_rect": [500, 164, 278, 222], "clear_rects": [[550, 335, 180, 42]], "clear_samples": [[555, 355, 3, 3]]}, {"id": "town_card_03", "source_rect": [790, 168, 250, 216], "target_rect": [790, 168, 250, 216], "clear_rects": [[820, 335, 190, 42]], "clear_samples": [[825, 355, 3, 3]]},
+ 			{"id": "town_card_04", "source_rect": [245, 396, 245, 216], "target_rect": [245, 396, 245, 216], "clear_rects": [[270, 560, 195, 42]], "clear_samples": [[275, 580, 3, 3]]}, {"id": "town_card_05", "source_rect": [500, 390, 278, 232], "target_rect": [500, 390, 278, 232], "clear_rects": [[550, 560, 180, 42]], "clear_samples": [[555, 580, 3, 3]]}, {"id": "town_card_06", "source_rect": [790, 396, 250, 216], "target_rect": [790, 396, 250, 216], "clear_rects": [[820, 560, 190, 42]], "clear_samples": [[825, 580, 3, 3]]},
+-			{"id": "back_button", "source_rect": [8, 620, 184, 85], "target_rect": [8, 620, 184, 85], "clear_rects": [[65, 640, 115, 42]], "clear_samples": [[155, 660, 3, 3]]},
++			{"id": "back_button", "source_rect": [8, 620, 184, 85], "target_rect": [8, 620, 184, 85], "clear_rects": [[32, 640, 140, 42]], "clear_samples": [[155, 660, 3, 3]]},
+ 		],
+ 		"regions": [
+ 			{"id": "town_name", "rect": [460, 15, 360, 55], "font_size": 26, "maximum": 12, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "ellipsis_terms": ["灰羽", "避難所", "町"], "component_ids": ["title"]},
+ 			{"id": "resource_summary", "rect": [380, 105, 550, 30], "font_size": 17, "maximum": 14, "rows": 2, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "numeric", "slot_rects": [[380, 105, 245, 30], [720, 105, 210, 30]], "component_ids": ["resources", "resources"]},
+ 			{"id": "town_actions", "rect": [270, 335, 740, 267], "font_size": 10, "maximum": 36, "rows": 6, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "slot_rects": [[270, 335, 195, 42], [550, 335, 180, 42], [820, 335, 190, 42], [270, 560, 195, 42], [550, 560, 180, 42], [820, 560, 190, 42]], "component_ids": ["town_card_01", "town_card_02", "town_card_03", "town_card_04", "town_card_05", "town_card_06"]},
+-			{"id": "back_action", "rect": [65, 640, 115, 42], "font_size": 13, "maximum": 12, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["back_button"]},
++			{"id": "back_action", "rect": [32, 640, 140, 42], "font_size": 13, "maximum": 12, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["back_button"]},
+ 		],
+ 		"default_state": {"town_name": ["灰羽の避難所"], "resource_summary": ["黒貨 12,450", "推奨戦力 25,600"], "town_actions": ["目的を確認する", "商店で準備する", "装備を整える", "仲間を編成する", "召喚石を確認する", "街道へ出発する"], "back_action": ["戻る"]},
+ 		"longest_state": {"town_name": ["灰羽の避難所・中央拠点"], "resource_summary": ["所持黒貨 999,999", "推奨戦力 999,999"], "town_actions": ["次の目的と進行条件を確認する", "商店で消耗品と素材を準備する", "仲間の装備と能力を整えて出発する", "出撃する仲間と役割を選択する", "所持している召喚石を確認する", "周辺の街道へ出発する"], "back_action": ["町の入口へ戻る"]}, "static_decorations": []},

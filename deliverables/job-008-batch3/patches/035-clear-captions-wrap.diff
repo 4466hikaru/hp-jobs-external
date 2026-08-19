@@ -1,0 +1,30 @@
+--- a/game/scripts/ui/Stage4MassBatch4.gd
++++ b/game/scripts/ui/Stage4MassBatch4.gd
+@@ -144,7 +144,7 @@ const SCREEN_SPECS: Dictionary = {
+ 		"regions": [
+ 			{"id": "result_title", "rect": [48, 39, 280, 34], "font_size": 20, "maximum": 16, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["title_band"]},
+ 			{"id": "result_stats", "rect": [120, 181, 185, 240], "font_size": 15, "maximum": 20, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "slot_rects": [[120, 181, 185, 30], [120, 251, 185, 30], [120, 321, 185, 30], [120, 391, 185, 30]], "component_ids": ["stat_01", "stat_02", "stat_03", "stat_04"]},
+-			{"id": "unlock_rows", "rect": [410, 395, 655, 28], "font_size": 13, "maximum": 12, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "numeric", "slot_rects": [[410, 395, 130, 28], [585, 395, 130, 28], [760, 395, 130, 28], [935, 395, 130, 28]], "component_ids": ["unlock_01", "unlock_02", "unlock_03", "unlock_04"]},
++			{"id": "unlock_rows", "rect": [400, 395, 675, 44], "font_size": 13, "maximum": 28, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "numeric", "autowrap": true, "slot_rects": [[400, 395, 150, 44], [575, 395, 150, 44], [750, 395, 150, 44], [925, 395, 150, 44]], "component_ids": ["unlock_01", "unlock_02", "unlock_03", "unlock_04"]},
+ 			{"id": "next_action", "rect": [940, 630, 245, 40], "font_size": 15, "maximum": 24, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["next_button"]},
+ 		],
+ 		"default_state": {"result_title": ["クエスト達成"], "result_stats": ["経過 02:16", "撃破 312", "獲得XP 184", "ダメージ 42"], "unlock_rows": ["黒貨 1,250", "月影結晶", "古文書", "素材袋"], "next_action": ["町へ戻る"]},
+@@ -412,10 +412,15 @@ static func _add_text_slot(parent: Control, screen_id: String, region: Dictionary
+ 	label.size = rect.size
+ 	label.text = text
+ 	label.horizontal_alignment = region.get("alignment", HORIZONTAL_ALIGNMENT_LEFT) as HorizontalAlignment
+ 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+-	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+-	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+-	label.clip_text = true
++	if bool(region.get("autowrap", false)):
++		label.autowrap_mode = TextServer.AUTOWRAP_ARBITRARY
++		label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
++		label.clip_text = false
++	else:
++		label.autowrap_mode = TextServer.AUTOWRAP_OFF
++		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
++		label.clip_text = true
+ 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ 	_apply_text_theme(label, int(region.get("font_size", 16)), str(region.get("tier", "body")), 2)
+ 	slot.add_child(label)

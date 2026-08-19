@@ -1,0 +1,6 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -5106,2 +5106,2 @@ func _layout_ui(force: bool = false) -> void:
+-		menu_panel.clip_contents = layout_state in [STATE_BOOT_SPLASH, STATE_ADULT_VIEWER_GATE, STATE_NEW_GAME_CONFIRM]
++		menu_panel.clip_contents = layout_state in [STATE_BOOT_SPLASH, STATE_ADULT_VIEWER_GATE, STATE_NEW_GAME_CONFIRM, STATE_CREDITS]
+ 		if layout_state == STATE_SCENE_VIEW:

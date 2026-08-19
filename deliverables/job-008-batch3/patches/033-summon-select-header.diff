@@ -1,0 +1,11 @@
+--- a/game/scripts/ui/Stage4MassBatch2.gd
++++ b/game/scripts/ui/Stage4MassBatch2.gd
+@@ -159,7 +159,7 @@ const SCREEN_SPECS: Dictionary = {
+ 		],
+ 		"regions": [
+ 			{"id": "screen_title", "rect": [430, 12, 330, 55], "font_size": 24, "maximum": 13, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "ellipsis_terms": ["召喚", "選択"], "component_ids": ["title"]},
+-			{"id": "resource_cost", "rect": [430, 88, 300, 35], "font_size": 20, "maximum": 13, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["召喚石", "所持", "消費"], "component_ids": ["resource"]},
++			{"id": "resource_cost", "rect": [350, 88, 580, 35], "font_size": 20, "maximum": 28, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["召喚石", "所持", "消費"], "component_ids": ["resource"]},
+ 			{"id": "banner_cards", "rect": [190, 315, 610, 298], "font_size": 19, "maximum": 16, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_small", "ellipsis_terms": ["召喚", "確率", "期間", "解放"], "slot_rects": [[200, 315, 235, 48], [580, 315, 220, 48], [200, 565, 235, 48], [580, 565, 220, 48]], "component_ids": ["summon_card_01", "summon_card_02", "summon_card_03", "summon_card_04"]},
+ 			{"id": "probability_info", "rect": [950, 385, 230, 180], "font_size": 16, "maximum": 13, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "ellipsis_terms": ["確率", "注意", "内容", "期限"], "slot_rects": [[950, 385, 230, 34], [950, 430, 230, 34], [950, 475, 230, 34], [950, 520, 230, 34]], "component_ids": ["probability_panel", "probability_panel", "probability_panel", "probability_panel"]},
+ 			{"id": "summon_action", "rect": [52, 638, 200, 42], "font_size": 15, "maximum": 20, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["召喚", "実行"], "component_ids": ["summon_button"]},

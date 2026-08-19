@@ -1,0 +1,8 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -5243,3 +5243,4 @@ func _layout_scene_adv_dialogue(position: Vector2, size: Vector2) -> void:
+ 	if scene_dialogue_wait_label != null:
+-		scene_dialogue_wait_label.position = position + size - Vector2(ADV_DIALOGUE_CONTENT_PADDING + 48.0, ADV_DIALOGUE_CONTENT_PADDING + 30.0)
++		# Extra inset so the wait triangle is not glued to the viewport corner.
++		scene_dialogue_wait_label.position = position + size - Vector2(ADV_DIALOGUE_CONTENT_PADDING + 48.0 + 20.0, ADV_DIALOGUE_CONTENT_PADDING + 30.0 + 20.0)
+ 

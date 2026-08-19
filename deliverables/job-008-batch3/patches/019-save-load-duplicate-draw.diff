@@ -1,0 +1,48 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -9667,6 +9667,7 @@
+ 	})
+ 	if not _install_approved_ui_wiring_b1_view(&"save_load_menu", view):
+ 		return false
++	_suppress_save_load_duplicate_draw(view)
+ 	var action := _bind_approved_ui_wiring_b1_action(view, "ui_text_save_load_menu_slot_actions_01", callback, disabled)
+ 	# The approved save image already carries a visible lower-left return label.
+ 	# Make that authored affordance a real pointer target as well as retaining
+@@ -9676,6 +9677,37 @@
+ 	return true
+ 
+ 
++func _suppress_save_load_duplicate_draw(view: Control) -> void:
++	# The approved PNG already paints the center title and the in-slot ロード.
++	# Stage4 still stamps a second title into the leftover title_safe well
++	# and a second ロード on the footer action row (job-004 41_save_load_menu).
++	if view == null:
++		return
++	var title := view.get_node_or_null("ui_text_save_load_menu_screen_title_01") as Control
++	if title != null:
++		title.visible = false
++	var background := view.get_node_or_null("ApprovedStaticBackground") as TextureRect
++	if background != null and background.texture != null:
++		var atlas := AtlasTexture.new()
++		atlas.atlas = background.texture
++		atlas.region = Rect2(0.0, 48.0, 70.0, 85.0)
++		var cover := TextureRect.new()
++		cover.name = "ui_save_load_title_well_cover"
++		cover.texture = atlas
++		cover.position = Vector2(70.0, 48.0)
++		cover.size = Vector2(320.0, 85.0)
++		cover.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
++		cover.stretch_mode = TextureRect.STRETCH_SCALE
++		cover.mouse_filter = Control.MOUSE_FILTER_IGNORE
++		view.add_child(cover)
++		view.move_child(cover, background.get_index() + 1)
++	var action := view.get_node_or_null("ui_text_save_load_menu_slot_actions_01") as Button
++	if action != null:
++		action.text = ""
++		action.position = Vector2(940.0, 228.0)
++		action.size = Vector2(260.0, 88.0)
++
++
+ func _show_approved_stage_select() -> bool:
+ 	var stage_cards: Array = []
+ 	var stage_ids: Array = []

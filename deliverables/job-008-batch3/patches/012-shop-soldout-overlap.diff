@@ -1,0 +1,66 @@
+--- a/game/scripts/ui/Stage4MassBatch3.gd
++++ b/game/scripts/ui/Stage4MassBatch3.gd
+@@ -40,7 +40,7 @@
+ 	"shop": {
+ 		"strategy": "approved_component_rows", "background": "res://assets/ui/ui_mass_batch3_v2/shop_approved_dynamic_clean_v002.png", "approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/16_商店.png",
+ 		"components": [{"id": "title", "source_rect": [530, 8, 220, 78], "target_rect": [530, 8, 220, 78], "clear_rects": [[560, 15, 175, 65]], "clear_samples": [[550, 30, 3, 3]]}, {"id": "currency", "source_rect": [885, 22, 360, 56], "target_rect": [885, 22, 360, 56], "clear_rects": [[905, 30, 325, 38]], "clear_samples": [[1230, 40, 3, 3]]}, {"id": "item_row_01", "source_rect": [40, 110, 790, 125], "target_rect": [40, 110, 790, 125], "clear_rects": [[245, 150, 280, 55]], "clear_samples": [[525, 150, 30, 55]]}, {"id": "item_row_02", "source_rect": [40, 235, 790, 125], "target_rect": [40, 235, 790, 125], "clear_rects": [[245, 275, 280, 55]], "clear_samples": [[525, 275, 30, 55]]}, {"id": "item_row_03", "source_rect": [40, 360, 790, 125], "target_rect": [40, 360, 790, 125], "clear_rects": [[245, 400, 280, 55]], "clear_samples": [[525, 400, 30, 55]]}, {"id": "item_row_04", "source_rect": [40, 485, 790, 125], "target_rect": [40, 485, 790, 125], "clear_rects": [[245, 525, 280, 55]], "clear_samples": [[525, 525, 30, 55]]}, {"id": "detail_panel", "source_rect": [850, 100, 405, 490], "target_rect": [850, 100, 405, 490], "clear_rects": []}, {"id": "buy_button", "source_rect": [860, 495, 375, 100], "target_rect": [860, 495, 375, 100], "clear_rects": [[930, 520, 240, 50]], "clear_samples": [[900, 520, 26, 50]]}],
+-		"regions": [{"id": "screen_title", "rect": [560, 15, 175, 65], "font_size": 14, "maximum": 13, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["title"]}, {"id": "currency", "rect": [905, 30, 325, 38], "font_size": 18, "maximum": 16, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "numeric", "component_ids": ["currency"]}, {"id": "item_rows", "rect": [245, 150, 280, 430], "font_size": 14, "maximum": 38, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "slot_rects": [[245, 150, 280, 55], [245, 275, 280, 55], [245, 400, 280, 55], [245, 525, 280, 55]], "component_ids": ["item_row_01", "item_row_02", "item_row_03", "item_row_04"]}, {"id": "selected_item", "rect": [885, 330, 320, 150], "font_size": 15, "maximum": 20, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "slot_rects": [[885, 330, 320, 25], [885, 370, 320, 25], [885, 410, 320, 25], [885, 450, 320, 25]], "component_ids": ["detail_panel", "detail_panel", "detail_panel", "detail_panel"]}, {"id": "buy_action", "rect": [930, 520, 240, 50], "font_size": 17, "maximum": 20, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["buy_button"]}],
++		"regions": [{"id": "screen_title", "rect": [560, 15, 175, 65], "font_size": 14, "maximum": 13, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["title"]}, {"id": "currency", "rect": [905, 30, 325, 38], "font_size": 18, "maximum": 16, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "numeric", "component_ids": ["currency"]}, {"id": "item_rows", "rect": [245, 150, 230, 430], "font_size": 14, "maximum": 38, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "autowrap": true, "slot_rects": [[245, 150, 230, 55], [245, 275, 230, 55], [245, 400, 230, 55], [245, 525, 230, 55]], "component_ids": ["item_row_01", "item_row_02", "item_row_03", "item_row_04"]}, {"id": "selected_item", "rect": [885, 330, 320, 150], "font_size": 15, "maximum": 20, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "slot_rects": [[885, 330, 320, 25], [885, 370, 320, 25], [885, 410, 320, 25], [885, 450, 320, 25]], "component_ids": ["detail_panel", "detail_panel", "detail_panel", "detail_panel"]}, {"id": "buy_action", "rect": [930, 520, 240, 50], "font_size": 17, "maximum": 20, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "component_ids": ["buy_button"]}],
+ 		"default_state": {"screen_title": ["商店"], "currency": ["所持黒貨 1,250"], "item_rows": ["小さな回復薬", "月光の欠片", "守りの護符", "古びた鍵"], "selected_item": ["月光の欠片", "効果: 強化素材", "価格: 480 黒貨", "在庫: 残り 3 個"], "buy_action": ["購入する"]},
+ 		"longest_state": {"screen_title": ["月影の礼拝堂・旅商人"], "currency": ["所持黒貨 999,999"], "item_rows": ["小さな回復薬と体力回復", "月影の礼拝堂の欠片", "守りの護符は売り切れ", "古びた地下墓所の鍵"], "selected_item": ["月影の結晶片", "効果: 強化素材", "価格: 480 黒貨", "在庫: 残り 3 個"], "buy_action": ["この商品を購入する"]}, "static_decorations": []},
+ 	"sell_inventory": {
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10749,7 +10749,8 @@
+ 		var entry := entry_value as Dictionary
+ 		var item: Dictionary = entry["item"] as Dictionary
+ 		var stock_label := "無制限" if int(entry["stock"]) < 0 else "在庫 %d" % int(entry["stock"])
+-		rows.append("%s  %d黒貨  %s" % [_shop_item_display_name(item), int(entry["price"]), stock_label])
++		# Name + price stay in the left well so they do not run into the row-3 売り切れ stamp (x>=525).
++		rows.append("%s\n%d黒貨  %s" % [_shop_item_display_name(item), int(entry["price"]), stock_label])
+ 	while rows.size() < 4:
+ 		rows.append("商品なし")
+ 	var selected: Dictionary = entries[0] as Dictionary if not entries.is_empty() else {}
+--- a/game/scripts/ui/Stage4MassBatch3.gd
++++ b/game/scripts/ui/Stage4MassBatch3.gd
+@@ -318,7 +318,8 @@
+ 	var maximum := int(region.get("maximum", 0))
+ 	var protected_terms: Array = region.get("ellipsis_terms", []) as Array
+ 	var is_action := str(region.get("kind", "")) in ["action_row", "action_column"]
+-	var text := source_text if is_action else truncate_text(source_text, maximum, protected_terms)
++	var wrap := bool(region.get("autowrap", false))
++	var text := source_text if is_action or wrap else truncate_text(source_text, maximum, protected_terms)
+ 	if is_action:
+ 		var button := Button.new()
+ 		button.name = node_name
+@@ -342,9 +343,9 @@
+ 	slot.name = node_name
+ 	slot.position = rect.position
+ 	slot.size = rect.size
+-	slot.clip_contents = true
++	slot.clip_contents = not wrap
+ 	slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+-	_apply_text_meta(slot, node_name, maximum, rect, source_text, protected_terms, component_id, "ellipsis")
++	_apply_text_meta(slot, node_name, maximum, rect, source_text, protected_terms, component_id, "wrap" if wrap else "ellipsis")
+ 	parent.add_child(slot)
+ 	var label := Label.new()
+ 	label.name = "Value"
+@@ -352,13 +353,13 @@
+ 	label.size = rect.size
+ 	label.text = text
+ 	label.horizontal_alignment = region.get("alignment", HORIZONTAL_ALIGNMENT_LEFT) as HorizontalAlignment
+-	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+-	label.autowrap_mode = TextServer.AUTOWRAP_OFF
+-	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+-	label.clip_text = true
++	label.vertical_alignment = VERTICAL_ALIGNMENT_TOP if wrap else VERTICAL_ALIGNMENT_CENTER
++	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap else TextServer.AUTOWRAP_OFF
++	label.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING if wrap else TextServer.OVERRUN_TRIM_ELLIPSIS
++	label.clip_text = not wrap
+ 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ 	_apply_text_theme(label, int(region.get("font_size", 16)), str(region.get("tier", "body")), 2)
+-	_apply_text_meta(label, node_name, maximum, Rect2(Vector2.ZERO, rect.size), source_text, protected_terms, component_id, "ellipsis")
++	_apply_text_meta(label, node_name, maximum, Rect2(Vector2.ZERO, rect.size), source_text, protected_terms, component_id, "wrap" if wrap else "ellipsis")
+ 	slot.add_child(label)
+ 
+ 

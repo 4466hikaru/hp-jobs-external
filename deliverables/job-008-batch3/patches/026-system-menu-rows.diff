@@ -1,0 +1,23 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -7217,6 +7217,9 @@
+ 	_set_ui_screen_id(&"system_menu")
+ 	run_state = STATE_SYSTEM
+ 	_show_menu_shell(_localized_text("screen.system"), "表示設定、保存データ操作、クレジット表記。")
++	# 9×44px + 12px sep overflow the 660px shell into the 64px bottom ornament
++	# (job-004 y≈695). Tighten rows so 戻る sits above the gold rule.
++	menu_box.add_theme_constant_override("separation", 6)
+ 	_add_menu_button("設定", _transition_to_options.bind("system"))
+ 	_add_menu_button(_localized_text("ui.save_load.menu_button"), _transition_to_save_load_menu.bind("system"))
+ 	_add_menu_button("クレジット / ライセンス", _transition_to_credits_license)
+@@ -7226,6 +7229,10 @@
+ 	_add_menu_button("セーブを初期化", _show_reset_save_confirm, "danger")
+ 	_add_menu_button("終了", _quit_game)
+ 	_add_menu_button("戻る", _transition_to_title_menu)
++	for child in menu_box.get_children():
++		var row := child as Button
++		if row != null:
++			row.custom_minimum_size.y = 40.0
+ 
+ 
+ func _dev_features_enabled() -> bool:

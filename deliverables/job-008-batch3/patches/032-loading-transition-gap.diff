@@ -1,0 +1,27 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -6708,10 +6708,11 @@ func _transition_resume_run() -> void:
+ 
+ 
+ func _transition_travel_title(destination: String) -> String:
+ 	var template := _localized_text("ui.transition.travel_to")
+-	if template.contains("%s"):
+-		return template % destination
+-	return destination
++	var title := template % destination if template.contains("%s") else destination
++	# Locale/template leaves a full-width or ascii gap before へ; collapse it so
++	# the band no longer reads left-heavy.
++	return title.replace(" へ", "へ").replace("　へ", "へ")
+ 
+ 
+ func _transition_card_for_region(region: Dictionary, include_tip: bool = true) -> Dictionary:
+--- a/game/scripts/ui/Stage4MassBatch3.gd
++++ b/game/scripts/ui/Stage4MassBatch3.gd
+@@ -76,6 +76,6 @@ const SCREEN_SPECS: Dictionary = {
+ 	"loading_transition": {
+ 		"strategy": "approved_direct_cutout", "background": "res://assets/ui/ui_mass_batch3_v2/loading_transition_approved_dynamic_clean_v002.png", "approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/25_遷移カード.png",
+ 		"components": [{"id": "destination_band", "source_rect": [400, 395, 480, 55], "target_rect": [400, 395, 480, 55], "clear_rects": []}, {"id": "objective_band", "source_rect": [400, 485, 480, 55], "target_rect": [400, 485, 480, 55], "clear_rects": []}, {"id": "status_band", "source_rect": [400, 540, 480, 55], "target_rect": [400, 540, 480, 55], "clear_rects": []}],
+-		"regions": [{"id": "destination", "rect": [420, 400, 440, 40], "font_size": 25, "maximum": 16, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["destination_band"]}, {"id": "next_objective", "rect": [420, 495, 440, 34], "font_size": 17, "maximum": 24, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "component_ids": ["objective_band"]}, {"id": "loading_status", "rect": [420, 550, 440, 30], "font_size": 16, "maximum": 20, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "note", "component_ids": ["status_band"]}],
++		"regions": [{"id": "destination", "rect": [410, 400, 460, 40], "font_size": 25, "maximum": 22, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["destination_band"]}, {"id": "next_objective", "rect": [420, 495, 440, 34], "font_size": 17, "maximum": 24, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "component_ids": ["objective_band"]}, {"id": "loading_status", "rect": [420, 550, 440, 30], "font_size": 16, "maximum": 20, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "note", "component_ids": ["status_band"]}],
+ 		"default_state": {"destination": ["月影の礼拝堂"], "next_objective": ["祭壇の鍵を探す"], "loading_status": ["読込中… 42%"]}, "longest_state": {"destination": ["月影の礼拝堂・最深部への道"], "next_objective": ["祭壇の鍵と封印の手がかりを探す"], "loading_status": ["出撃準備を完了しています"]}, "static_decorations": []},
+ 	"dungeon_info": {

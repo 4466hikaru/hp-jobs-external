@@ -1,0 +1,23 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -23992,7 +23992,7 @@
+ 	var font := ThemeDB.get_fallback_font()
+ 	var character_name := _localized_text(str(character.get("nameKey", "character.kiriha.name")))
+ 	if font != null:
+-		draw_string(font, preview_rect.position + Vector2(24.0, 34.0), "STANDING MOTION QA", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 18, Color("#f5d38a"))
++		# Skip STANDING MOTION QA — it sits at ≈(728, 72), outside the left MenuPanel.
+ 		draw_string(font, preview_rect.position + Vector2(24.0, 58.0), character_name, HORIZONTAL_ALIGNMENT_LEFT, -1.0, 28, Color("#fff8ef"))
+ 		draw_string(font, preview_rect.position + Vector2(24.0, preview_rect.size.y - 24.0), "Spineなし / 分割PNG差し替え前の動き量確認", HORIZONTAL_ALIGNMENT_LEFT, -1.0, 14, Color("#c9c2b6"))
+ 
+@@ -24021,6 +24021,11 @@
+ 	_draw_motion_check_overlay_region(texture, base_rect, Rect2(Vector2(0.28, 0.66), Vector2(0.44, 0.26)), Vector2(-hair_sway * 2.0, breath * 2.4), Color(1.0, 0.96, 0.92, 0.24))
+ 	_draw_motion_check_face_guides(base_rect, font)
+ 	_draw_motion_check_meter(preview_rect, font, breath, hair_sway)
++	# Opaque shell fill last so the QA plate / polygons do not show through cards.
++	if menu_panel != null and menu_panel.visible:
++		var origin := global_position if is_inside_tree() else Vector2.ZERO
++		var panel_pos := menu_panel.global_position - origin if menu_panel.is_inside_tree() else menu_panel.position
++		draw_rect(Rect2(panel_pos, menu_panel.size), Color("#111017"))
+ 
+ 
+ func _draw_motion_check_overlay_region(texture: Texture2D, fitted_rect: Rect2, normalized_region: Rect2, offset: Vector2, tint: Color) -> void:

@@ -1,0 +1,18 @@
+--- a/game/scripts/ui/Stage4MassBatch3.gd
++++ b/game/scripts/ui/Stage4MassBatch3.gd
+@@ -61,3 +61,3 @@
+ 		"strategy": "approved_component_cards", "background": "res://assets/ui/ui_mass_batch3_v2/equipment_slots_approved_dynamic_clean_v002.png", "approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/22_装備スロット.png",
+-		"components": [{"id": "title_band", "source_rect": [800, 68, 350, 50], "target_rect": [800, 68, 350, 50], "clear_rects": []}, {"id": "stat_panel", "source_rect": [770, 115, 455, 285], "target_rect": [770, 115, 455, 285], "clear_rects": []}, {"id": "slot_card_01", "source_rect": [780, 420, 105, 155], "target_rect": [780, 420, 105, 155], "clear_rects": []}, {"id": "slot_card_02", "source_rect": [890, 420, 105, 155], "target_rect": [890, 420, 105, 155], "clear_rects": []}, {"id": "slot_card_03", "source_rect": [1000, 420, 105, 155], "target_rect": [1000, 420, 105, 155], "clear_rects": []}, {"id": "slot_card_04", "source_rect": [1110, 420, 100, 155], "target_rect": [1110, 420, 100, 155], "clear_rects": []}, {"id": "select_button", "source_rect": [845, 585, 335, 105], "target_rect": [845, 585, 335, 105], "clear_rects": []}],
++		"components": [{"id": "title_band", "source_rect": [800, 68, 350, 50], "target_rect": [800, 68, 350, 50], "clear_rects": []}, {"id": "stat_panel", "source_rect": [770, 115, 455, 285], "target_rect": [770, 115, 455, 285], "clear_rects": []}, {"id": "slot_card_01", "source_rect": [780, 420, 105, 155], "target_rect": [768, 420, 96, 155], "clear_rects": []}, {"id": "slot_card_02", "source_rect": [890, 420, 105, 155], "target_rect": [874, 420, 96, 155], "clear_rects": []}, {"id": "slot_card_03", "source_rect": [1000, 420, 105, 155], "target_rect": [980, 420, 96, 155], "clear_rects": []}, {"id": "slot_card_04", "source_rect": [1110, 420, 100, 155], "target_rect": [1086, 420, 96, 155], "clear_rects": []}, {"id": "select_button", "source_rect": [845, 585, 335, 105], "target_rect": [845, 585, 335, 105], "clear_rects": []}],
+ 		# R1: the text rows now centre on the four stat icons instead of falling
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10966,7 +10966,7 @@
+ 	view.set_meta("b3_live_slot_types", slot_types.duplicate())
+ 	if not _install_approved_ui_wiring_b3_view(&"equipment_slots", view):
+ 		return false
+-	var rects := [Rect2(780.0, 420.0, 105.0, 155.0), Rect2(890.0, 420.0, 105.0, 155.0), Rect2(1000.0, 420.0, 105.0, 155.0)]
++	var rects := [Rect2(768.0, 420.0, 96.0, 155.0), Rect2(874.0, 420.0, 96.0, 155.0), Rect2(980.0, 420.0, 96.0, 155.0), Rect2(1086.0, 420.0, 96.0, 155.0)]
+ 	var first: Button
+ 	for index in range(mini(slot_types.size(), rects.size())):
+ 		var slot_type := str(slot_types[index])
