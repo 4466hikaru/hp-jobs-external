@@ -1,6 +1,6 @@
 # job-012: UIパーツ バッチ1の実機配置 — 分業体制の第1弾(あなた=配置担当)
 
-- status: open
+- status: in-progress(game)
 - 難度: 高(GDScript/シーン。タイトル+セーブ画面)
 - 納品方法: A(branch `job/012` → PR)。diffパッチ+テストで納品
 

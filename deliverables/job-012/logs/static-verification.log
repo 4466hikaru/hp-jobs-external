@@ -1,0 +1,30 @@
+=== git apply --check against reconstructed tree (Main.gd from gh api 92ff9cdc / blob cf895716) ===
+CR orig Main.gd: 0
+001 APPLY_CHECK_OK (recorded from /tmp/job012-merge/check-tree)
+002 APPLY_CHECK_OK after 001
+003 APPLY_CHECK_OK after 001+002
+004 APPLY_CHECK_OK after 001 (combined title+save)
+original title_image2.patch APPLY_CHECK_OK after 001 (no hand-rebase)
+original 05_save_image2.patch APPLY_CHECK_OK after 001+title (no hand-rebase)
+
+=== CR count (must be 0) ===
+  0  README.md
+  0  logs/honest-unverified.md
+  0  logs/static-verification.log
+  0  patches/001-ui-staging-image2-flag.diff
+  0  patches/002-title-image2.diff
+  0  patches/003-save-image2.diff
+  0  patches/004-title-save-combined.diff
+  0  save-coords.md
+  0  tests/test_job012_flag_headless.gd
+  0  tests/test_job012_static_flag.py
+  0  tests/test_job012_static_placement.py
+  0  title-coords.md
+CR=0 OK
+
+=== static tests on patched tree /tmp/job012-merge/game-tree ===
+PASS job-012 static flag
+PASS job-012 static placement
+
+Godot headless: NOT RUN (mirror asset-stripped) 未実行
+0.35s transition assert: 未実行

@@ -1,0 +1,47 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -642,6 +642,8 @@
+ var screen_audit_wait_frames := 0
+ var screen_audit_measure_panels_only := false
+ var screen_audit_resolved_output_dir := ""
++# job-012: mirror HEAD 92ff9cdc had no --ui-staging. Empty = current path.
++var ui_staging_mode := ""
+ var ui_screen_id: StringName = &""
+ var ui_screen_overlay_stack: Array[StringName] = []
+ var draw_screen_origin := Vector2.ZERO
+@@ -3924,6 +3926,7 @@
+ 		args.append(arg)
+ 
+ 	_configure_store_target_arg(args)
++	_configure_ui_staging_arg(args)
+ 
+ 	for arg in args:
+ 		var value := str(arg)
+@@ -4075,6 +4078,27 @@
+ 			requested_store_target = value.trim_prefix("--store-target=").strip_edges()
+ 
+ 
++func _configure_ui_staging_arg(args: PackedStringArray) -> void:
++	# Same style as --store-target: --ui-staging=image2 or --ui-staging image2.
++	# Absent / empty / unknown value leaves ui_staging_mode empty (current path).
++	for arg_index in range(args.size()):
++		var value := str(args[arg_index])
++		if value == "--ui-staging":
++			var next_value := ""
++			if arg_index + 1 < args.size():
++				next_value = str(args[arg_index + 1]).strip_edges()
++			if next_value != "" and not next_value.begins_with("--"):
++				ui_staging_mode = next_value.to_lower()
++			else:
++				ui_staging_mode = ""
++		elif value.begins_with("--ui-staging="):
++			ui_staging_mode = value.trim_prefix("--ui-staging=").strip_edges().to_lower()
++
++
++func _ui_staging_is_image2() -> bool:
++	return ui_staging_mode == "image2"
++
++
+ func _prepare_playtest_runtime_stage() -> void:
+ 	if playtest_world_region_id != "":
+ 		var region := _region_by_id(playtest_world_region_id)
