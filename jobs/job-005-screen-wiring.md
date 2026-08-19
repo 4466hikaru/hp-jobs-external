@@ -1,6 +1,6 @@
 # job-005: 死に画面3枚の復活配線+画面IDの使い回し分離
 
-- status: in-progress(game)
+- status: done(2026-08-19 検収合格・本体repoへ適用済み。テストの待ち漏れ2箇所のみPM側修正)
 - 難度: 中(GDScript、Main.gd周辺)
 - 納品方法: A(branch `job/005` → PR)。コードはdiffパッチ+テストで納品(ミラーrepo hp-game-share が参照の正)
 
