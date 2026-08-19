@@ -1,0 +1,70 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -244,6 +244,10 @@
+ const IMAGE2_BUTTON_CROP := Rect2(37.0, 4.0, 438.0, 120.0)
+ const IMAGE2_BUTTON_MARGIN_X := 27.0
+ const IMAGE2_BUTTON_MARGIN_Y := 20.0
++# Image2 / kit2 panel 9-slices keep a 64px ornament. Content must start after
++# that inner vertical rule or the gold line sits on the first glyph.
++# 720-wide centered shell: left=280, inner rule≈344. 580-wide left shell: left≈90, inner≈154.
++const MENU_PANEL_FRAME_INSET := 72.0
+ const AUDIO_BUS_BGM := "BGM"
+ const AUDIO_BUS_SE := "SE"
+ const AUDIO_BUS_VOICE := "Voice"
+@@ -5317,7 +5321,7 @@
+ 	menu_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+ 	menu_panel.position = Vector2(360, 84)
+ 	menu_panel.custom_minimum_size = Vector2(560, 480)
+-	menu_panel.add_theme_stylebox_override("panel", _kit2_menu_panel_style(26.0))
++	menu_panel.add_theme_stylebox_override("panel", _kit2_menu_panel_style(MENU_PANEL_FRAME_INSET))
+ 	menu_panel.gui_input.connect(_on_scene_dialogue_box_gui_input)
+ 	ui_layer.add_child(menu_panel)
+ 
+@@ -5922,8 +5926,8 @@
+ 	return _kit2_overlay_panel_style(content_margin)
+ 
+ 
+-func _kit2_menu_panel_style(content_margin: float = 24.0) -> StyleBox:
+-	var generated_style := _image2_panel_style(false, content_margin)
++func _kit2_menu_panel_style(content_margin: float = MENU_PANEL_FRAME_INSET) -> StyleBox:
++	var generated_style := _image2_panel_style(false, maxf(content_margin, MENU_PANEL_FRAME_INSET))
+ 	if generated_style != null:
+ 		return generated_style
+ 	var kit_style := _kit2_texture_style("panel_menu_9s", clampf(content_margin * 2.0, 28.0, 48.0), content_margin)
+@@ -6015,10 +6019,11 @@
+ 	style.texture_margin_right = 64.0
+ 	style.texture_margin_top = 64.0
+ 	style.texture_margin_bottom = 64.0
+-	style.content_margin_left = content_margin
+-	style.content_margin_right = content_margin
+-	style.content_margin_top = content_margin
+-	style.content_margin_bottom = content_margin
++	var inset: float = maxf(content_margin, MENU_PANEL_FRAME_INSET)
++	style.content_margin_left = inset
++	style.content_margin_right = inset
++	style.content_margin_top = inset
++	style.content_margin_bottom = inset
+ 	style.modulate_color = tint
+ 	return style
+ 
+@@ -13634,9 +13639,9 @@
+ 	elif _uses_gold_menu_panel_style():
+ 		menu_panel.add_theme_stylebox_override("panel", _kit2_overlay_panel_style(24.0))
+ 	elif _uses_card_forward_menu_backdrop():
+-		menu_panel.add_theme_stylebox_override("panel", _kit2_menu_panel_style(24.0))
++		menu_panel.add_theme_stylebox_override("panel", _kit2_menu_panel_style(MENU_PANEL_FRAME_INSET))
+ 	else:
+-		menu_panel.add_theme_stylebox_override("panel", _kit2_menu_panel_style(26.0))
++		menu_panel.add_theme_stylebox_override("panel", _kit2_menu_panel_style(MENU_PANEL_FRAME_INSET))
+ 	if run_state in [STATE_ADULT_VIEWER_GATE, STATE_NEW_GAME_CONFIRM]:
+ 		# These are the two QG-13 legacy-shell edge cases.  Their prior textured
+ 		# shell did not give pixel evidence of a closing edge; the adult gate's
+@@ -14565,7 +14570,7 @@
+ func _menu_content_width() -> float:
+ 	if menu_panel == null:
+ 		return 500.0
+-	return max(360.0, menu_panel.size.x - 48.0)
++	return max(360.0, menu_panel.size.x - MENU_PANEL_FRAME_INSET * 2.0)
+ 
+ 
+ func _select_character(character_id: String) -> void:
