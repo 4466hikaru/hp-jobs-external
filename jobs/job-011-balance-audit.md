@@ -1,6 +1,6 @@
 # job-011: バランス数値の監査 — buffs有効化後の壊れ探し
 
-- status: open
+- status: in-progress(game)
 - 難度: 高(データ解析。コード変更なし)
 - 納品方法: A(branch `job/011` → PR)
 
