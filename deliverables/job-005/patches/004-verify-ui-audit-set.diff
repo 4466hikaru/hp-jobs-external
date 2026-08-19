@@ -1,0 +1,29 @@
+--- a/tools/screen-audit/verify-ui-audit-set.mjs
++++ b/tools/screen-audit/verify-ui-audit-set.mjs
+@@ -8,7 +8,7 @@
+ const repoRoot = path.resolve(scriptDir, "../..");
+ const defaultInventoryPath = path.join(scriptDir, "screen-inventory.json");
+ 
+-const EXPECTED_SCREEN_COUNT = 49;
++const EXPECTED_SCREEN_COUNT = 51;
+ const EXPECTED_WIDTH = 1280;
+ const EXPECTED_HEIGHT = 720;
+ const MIN_PNG_BYTES = 1024;
+@@ -68,6 +68,8 @@
+   "new_game_confirm",
+   "world_tile_map",
+   "system_menu",
++  "return_title_confirm",
++  "boundary_shop",
+ ];
+ 
+ const CANONICAL_SCREENS = CANONICAL_SCREEN_IDS.map((id, index) => ({
+@@ -79,7 +81,7 @@
+ function printHelp() {
+   console.log(`Usage: node tools/screen-audit/verify-ui-audit-set.mjs [audit-output-dir] [options]
+ 
+-Validate the exact 49 numbered PNG captures declared by the screen inventory.
++Validate the exact 51 numbered PNG captures declared by the screen inventory.
+ 
+ Arguments:
+   audit-output-dir       Directory containing the captured PNG files.

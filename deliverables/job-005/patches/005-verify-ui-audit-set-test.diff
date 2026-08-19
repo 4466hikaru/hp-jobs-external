@@ -1,0 +1,23 @@
+--- a/tools/screen-audit/tests/verify-ui-audit-set.test.mjs
++++ b/tools/screen-audit/tests/verify-ui-audit-set.test.mjs
+@@ -43,16 +43,16 @@
+   };
+ }
+ 
+-test("accepts exactly the 46 expected 1280x720 captures", (t) => {
++test("accepts exactly the 51 expected 1280x720 captures", (t) => {
+   const fixture = makeFixture();
+   t.after(() => fs.rmSync(fixture, { recursive: true, force: true }));
+ 
+   const result = run(fixture);
+   assert.equal(result.status, 0, result.stderr);
+   assert.equal(result.summary.ok, true);
+-  assert.equal(result.summary.expected, 46);
+-  assert.equal(result.summary.found, 46);
+-  assert.equal(result.summary.valid, 46);
++  assert.equal(result.summary.expected, 51);
++  assert.equal(result.summary.found, 51);
++  assert.equal(result.summary.valid, 51);
+   assert.equal(result.summary.ignoredDerivedPngs, 1);
+ });
+ 

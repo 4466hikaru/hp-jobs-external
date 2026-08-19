@@ -1,0 +1,50 @@
+=== job-005 static verification 2026-08-19T02:55:34Z ===
+Working tree: locally fetched hp-game-share files via gh api (not a git clone)
+
+--- test_job005_static_ids.py ---
+Job005StaticIds: PASS 51-id registry/inventory/audit + wiring tokens + ID split + run_history intact
+
+--- verify-ui-audit-set.test.mjs (node:test) ---
+TAP version 13
+# Subtest: accepts exactly the 51 expected 1280x720 captures
+ok 1 - accepts exactly the 51 expected 1280x720 captures
+  ---
+  duration_ms: 144.160602
+  ...
+# Subtest: rejects missing, unexpected, and wrong-sized captures
+ok 2 - rejects missing, unexpected, and wrong-sized captures
+  ---
+  duration_ms: 117.745985
+  ...
+# Subtest: rejects an inventory that replaces a canonical screen id
+ok 3 - rejects an inventory that replaces a canonical screen id
+  ---
+  duration_ms: 117.621246
+  ...
+# Subtest: rejects an inventory that changes a canonical screenshot mapping
+ok 4 - rejects an inventory that changes a canonical screenshot mapping
+  ---
+  duration_ms: 120.852057
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 657.125158
+
+--- existing B2 nav-label contract still present ---
+PASS nav 画面/音量/ゲーム/戻る
+PASS gameplay ダメージ表示
+PASS run_history builder
+PASS pause overlay still pause
+PASS save_delete still used for delete
+existing-contract: PASS
+
+--- Godot headless ---
+SKIP: Godot is not installed on this box, and hp-game-share is an asset-stripped mirror.
+Cannot run game/tests/test_ui_wiring_b1_runtime.gd / test_ui_wiring_b2_runtime.gd / test_job005_screen_wiring.gd here.
+Those must be run on a playable checkout after applying patches.

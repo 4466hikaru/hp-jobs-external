@@ -1,0 +1,276 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -4393,6 +4393,13 @@
+ 		"pause":
+ 			_screen_audit_start_world_field()
+ 			_show_pause_menu()
++		"return_title_confirm":
++			_show_town_menu(_screen_audit_town_id())
++			_show_town_title_confirm()
++		"boundary_shop":
++			_screen_audit_start_dungeon()
++			pending_dungeon_round_index = 0
++			_render_boundary_shop()
+ 		"clear":
+ 			_screen_audit_start_world_field()
+ 			elapsed = minf(180.0, float(stage.get("duration", 180.0)))
+@@ -7458,17 +7465,41 @@
+ 	_push_ui_screen_overlay(&"save_delete_confirm")
+ 	save_load_return_target = return_target
+ 	run_state = STATE_SAVE_DELETE_CONFIRM
+-	_show_menu_shell(_localized_text("ui.save_load.delete_confirm.title"), _localized_text("ui.save_load.delete_confirm.subtitle"))
+ 	var slot_summary: Dictionary = _save_load_slot_summary()
++	if USE_APPROVED_UI_WIRING_B1 and _show_approved_save_delete_confirm(slot_summary):
++		return
++	_show_menu_shell(_localized_text("ui.save_load.delete_confirm.title"), _localized_text("ui.save_load.delete_confirm.subtitle"))
+ 	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default")
+ 	_add_menu_button(_localized_text("ui.save_load.delete_confirm.confirm"), _delete_slot_1_save, "danger")
+ 	_add_menu_button(_localized_text("ui.save_load.delete_confirm.cancel"), _cancel_save_delete_confirm)
+ 
+ 
++func _show_approved_save_delete_confirm(slot_summary: Dictionary) -> bool:
++	var target_rows: Array = [_localized_text("ui.save_load.slot_1.title")]
++	for detail_line_value in _save_slot_detail_lines(slot_summary):
++		if target_rows.size() >= 3:
++			break
++		target_rows.append(str(detail_line_value))
++	while target_rows.size() < 3:
++		target_rows.append("")
++	var view := Stage4MassBatch1.build_view("save_delete_confirm", {
++		"dialog_title": [_localized_text("ui.save_load.delete_confirm.title")],
++		"target_slot": target_rows,
++		"actions": [
++			_localized_text("ui.save_load.delete_confirm.confirm"),
++			_localized_text("ui.save_load.delete_confirm.cancel"),
++		],
++	})
++	if not _install_approved_ui_wiring_b1_view(&"save_delete_confirm", view):
++		return false
++	var confirm := _bind_approved_ui_wiring_b1_action(view, "ui_text_save_delete_confirm_actions_01", Callable(self, "_delete_slot_1_save"), false, &"danger")
++	_bind_approved_ui_wiring_b1_action(view, "ui_text_save_delete_confirm_actions_02", Callable(self, "_cancel_save_delete_confirm"), false, &"back")
++	_focus_approved_ui_wiring_b1_button(confirm)
++	return true
++
++
+ func _show_town_title_confirm() -> void:
+-	# Reuse the existing confirmation descriptor and overlay presentation; this modal is
+-	# not a separately audited screen.
+-	_push_ui_screen_overlay(&"save_delete_confirm")
++	_push_ui_screen_overlay(&"return_title_confirm")
+ 	run_state = STATE_TOWN_TITLE_CONFIRM
+ 	_show_menu_shell("タイトルへ戻りますか?", "町での準備内容はそのまま保持されます。")
+ 	_add_menu_button("はい", _transition_confirm_town_return_to_title, "danger")
+@@ -9546,6 +9577,32 @@
+ 	return button
+ 
+ 
++func _add_approved_ui_wiring_b1_text_action(view: Control, node_name: String, rect: Rect2, label_text: String, callback: Callable, disabled: bool = false, hover_kind: StringName = &"action") -> Button:
++	if view == null:
++		return null
++	var button := Button.new()
++	button.name = node_name
++	button.position = rect.position
++	button.size = rect.size
++	button.text = label_text
++	button.flat = true
++	button.alignment = HORIZONTAL_ALIGNMENT_CENTER
++	button.focus_mode = Control.FOCUS_ALL
++	button.disabled = disabled
++	button.set_meta("ui_hover_kind", hover_kind)
++	button.set_meta("ui_wiring_b1_text_action", true)
++	button.add_theme_font_size_override("font_size", 18)
++	button.add_theme_color_override("font_color", Color("f5d47b"))
++	button.add_theme_color_override("font_outline_color", Color("080b0e"))
++	button.add_theme_constant_override("outline_size", 2)
++	button.modulate = Color(0.58, 0.58, 0.62, 1.0) if disabled else Color.WHITE
++	_connect_button_ui_audio(button, disabled)
++	if not disabled and callback.is_valid():
++		button.pressed.connect(callback)
++	view.add_child(button)
++	return button
++
++
+ func _set_approved_ui_wiring_b1_text(view: Control, node_name: String, text: String) -> void:
+ 	if view == null:
+ 		return
+@@ -9672,6 +9729,8 @@
+ 	# Make that authored affordance a real pointer target as well as retaining
+ 	# the shared keyboard/gamepad back handler.
+ 	_add_approved_ui_wiring_b1_hotspot(view, "ui_wiring_b1_save_load_back", Rect2(48.0, 625.0, 190.0, 76.0), Callable(self, "_return_from_save_load_menu"), false, &"back", "戻る")
++	var delete_disabled := slot_state == SAVE_SLOT_STATE_EMPTY
++	_add_approved_ui_wiring_b1_text_action(view, "ui_wiring_b1_save_load_delete", Rect2(800.0, 540.0, 190.0, 64.0), _localized_text("ui.save_load.delete"), Callable(self, "_transition_to_save_delete_confirm").bind(save_load_return_target), delete_disabled, &"danger")
+ 	_focus_approved_ui_wiring_b1_button(action)
+ 	return true
+ 
+@@ -10305,15 +10364,64 @@
+ 	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_02", Callable(self, "_select_approved_b2_options_category").bind("audio"), false, &"tab", "se.ui.r3.tab")
+ 	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_03", Callable(self, "_select_approved_b2_options_category").bind("gameplay"), false, &"tab", "se.ui.r3.tab")
+ 	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_04", Callable(self, "_return_from_options"), false, &"back")
++	# Same content column as the 4 setting rows. Extra categories reuse the
++	# approved options layout instead of inventing a new nav rail.
++	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_language", Rect2(470.0, 548.0, 185.0, 40.0), "言語・テキスト", Callable(self, "_select_approved_b2_options_category").bind("language"), false, &"tab")
++	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_input", Rect2(705.0, 548.0, 205.0, 40.0), "入力設定", Callable(self, "_select_approved_b2_options_category").bind("input"), false, &"tab")
++	_bind_approved_b2_options_setting_actions(view)
+ 	_focus_approved_ui_wiring_b2_button(display_tab)
+ 	return true
+ 
+ 
+ func _select_approved_b2_options_category(category: String) -> void:
++	if category == "language":
++		_show_language_text_settings(options_return_target)
++		return
++	if category == "input":
++		_show_input_config(options_return_target)
++		return
+ 	approved_b2_options_category = category if category in ["display", "audio", "gameplay"] else "display"
+ 	_show_options(options_return_target)
+ 
+ 
++func _bind_approved_b2_options_setting_actions(view: Control) -> void:
++	var value_rects := [
++		Rect2(705.0, 276.0, 205.0, 35.0),
++		Rect2(705.0, 343.0, 205.0, 35.0),
++		Rect2(705.0, 410.0, 205.0, 35.0),
++		Rect2(705.0, 475.0, 205.0, 40.0),
++	]
++	match approved_b2_options_category:
++		"display":
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_01", value_rects[0], "", Callable(self, "_toggle_fullscreen"))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_02", value_rects[1], "", Callable(self, "_change_window_size").bind(1))
++		"audio":
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_01", value_rects[0], "", Callable(self, "_nudge_approved_b2_volume").bind("bgmVolume", 0.05))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_02", value_rects[1], "", Callable(self, "_nudge_approved_b2_volume").bind("seVolume", 0.05))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_03", value_rects[2], "", Callable(self, "_nudge_approved_b2_volume").bind("voiceVolume", 0.05))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_04", value_rects[3], "", Callable(self, "_nudge_approved_b2_volume").bind("masterVolume", 0.05))
++		"gameplay":
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_01", value_rects[0], "", Callable(self, "_toggle_approved_b2_setting").bind("damageNumbersEnabled"))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_02", value_rects[1], "", Callable(self, "_toggle_approved_b2_setting").bind("hitStopEnabled"))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_03", value_rects[2], "", Callable(self, "_toggle_approved_b2_setting").bind("skipSeenScenes"))
++			_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_setting_04", value_rects[3], "", Callable(self, "_toggle_approved_b2_setting").bind("allowUnseenSceneSkip"))
++
++
++func _nudge_approved_b2_volume(setting_key: String, delta: float) -> void:
++	var settings := _settings_data()
++	var current := clampf(float(settings.get(setting_key, 0.8)), 0.0, 1.0)
++	var next := current + delta
++	if next > 1.0:
++		next = 0.0
++	settings[setting_key] = next
++	save_data["settings"] = settings
++	_apply_saved_settings()
++	audio_suppress_save_se = true
++	_write_save_data()
++	audio_suppress_save_se = false
++	_show_options(options_return_target)
++
++
+ func _approved_b2_options_category_state(settings: Dictionary) -> Dictionary:
+ 	var state := {
+ 		"screen_title": [_localized_text("screen.options")],
+@@ -12089,6 +12197,8 @@
+ 	options_return_target = return_target
+ 	run_state = STATE_OPTIONS_LANGUAGE_TEXT
+ 	var settings: Dictionary = _settings_data()
++	if USE_APPROVED_UI_WIRING_B2 and _show_approved_b2_language_text(settings):
++		return
+ 	var language_id: String = str(settings.get("language", DEFAULT_LANGUAGE_ID))
+ 	var text_speed: float = _text_speed_chars_per_second(settings)
+ 	var auto_speed: float = _auto_speed_seconds(settings)
+@@ -12127,11 +12237,83 @@
+ 	_transition_to_options(options_return_target)
+ 
+ 
++func _show_approved_b2_language_text(settings: Dictionary) -> bool:
++	var language_id: String = str(settings.get("language", DEFAULT_LANGUAGE_ID))
++	var text_speed: float = _text_speed_chars_per_second(settings)
++	var auto_speed: float = _auto_speed_seconds(settings)
++	var view := Stage4MassBatch6.build_view("options_language_text", {
++		"screen_title": [_localized_text("screen.language_text")],
++		"language_action": [_language_label(language_id)],
++		"setting_labels": [
++			"言語",
++			"文字速度  %d字/秒" % int(roundf(text_speed)),
++			"自動送り  %.1f秒" % auto_speed,
++			"プレビュー",
++		],
++		"back_action": ["戻る"],
++	})
++	if not _install_approved_ui_wiring_b2_view(&"options_language_text", view):
++		return false
++	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_language_text_language_action_01", Callable(), true)
++	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_language_text_back_action_01", Callable(self, "_return_from_language_text_settings"), false, &"back")
++	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_language_text_speed_down", Rect2(560.0, 282.0, 170.0, 55.0), "-%d字" % int(TEXT_SPEED_STEP), Callable(self, "_change_text_speed").bind(-TEXT_SPEED_STEP))
++	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_language_text_speed_up", Rect2(740.0, 282.0, 170.0, 55.0), "+%d字" % int(TEXT_SPEED_STEP), Callable(self, "_change_text_speed").bind(TEXT_SPEED_STEP))
++	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_language_auto_speed_down", Rect2(560.0, 380.0, 170.0, 55.0), "-%.1f秒" % AUTO_SPEED_STEP, Callable(self, "_change_auto_speed_for_language_text").bind(-AUTO_SPEED_STEP))
++	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_language_auto_speed_up", Rect2(740.0, 380.0, 170.0, 55.0), "+%.1f秒" % AUTO_SPEED_STEP, Callable(self, "_change_auto_speed_for_language_text").bind(AUTO_SPEED_STEP))
++	var back := view.get_node_or_null("ui_text_options_language_text_back_action_01") as Button
++	_focus_approved_ui_wiring_b2_button(back)
++	return true
++
++
++func _show_approved_b2_input_config(settings: Dictionary) -> bool:
++	var bindings: Dictionary = _normalize_input_bindings(settings.get("inputBindings", {}))
++	var specs: Array = []
++	for spec_value in INPUT_BINDING_SPECS:
++		if specs.size() >= 8:
++			break
++		specs.append(spec_value)
++	var action_labels: Array = []
++	for spec_value in specs:
++		var spec: Dictionary = spec_value
++		var action_id: String = str(spec.get("id", ""))
++		var entry: Dictionary = bindings.get(action_id, {})
++		action_labels.append(_keycode_label(int(entry.get("key", int(spec.get("defaultKey", 0))))))
++	for spec_value in specs:
++		var spec: Dictionary = spec_value
++		var action_id: String = str(spec.get("id", ""))
++		var entry: Dictionary = bindings.get(action_id, {})
++		action_labels.append(_joy_button_label(int(entry.get("joy", int(spec.get("defaultJoy", -1))))))
++	while action_labels.size() < 16:
++		action_labels.append("")
++	var title := _localized_text("screen.input_config")
++	if input_rebind_action_id != "":
++		title = "入力待ち"
++	var view := Stage4MassBatch6.build_view("input_config", {
++		"screen_title": [title],
++		"binding_actions": action_labels,
++		"reset_action": ["初期化"],
++		"back_action": ["戻る"],
++	})
++	if not _install_approved_ui_wiring_b2_view(&"input_config", view):
++		return false
++	for index in range(specs.size()):
++		var spec: Dictionary = specs[index]
++		var action_id: String = str(spec.get("id", ""))
++		_bind_approved_ui_wiring_b2_action(view, "ui_text_input_config_binding_actions_%02d" % (index + 1), Callable(self, "_begin_input_rebind").bind(action_id, INPUT_REBIND_KEYBOARD))
++		_bind_approved_ui_wiring_b2_action(view, "ui_text_input_config_binding_actions_%02d" % (index + 9), Callable(self, "_begin_input_rebind").bind(action_id, INPUT_REBIND_GAMEPAD))
++	_bind_approved_ui_wiring_b2_action(view, "ui_text_input_config_reset_action_01", Callable(self, "_reset_input_bindings"), false, &"danger")
++	var back := _bind_approved_ui_wiring_b2_action(view, "ui_text_input_config_back_action_01", Callable(self, "_return_from_input_config"), false, &"back")
++	_focus_approved_ui_wiring_b2_button(back)
++	return true
++
++
+ func _show_input_config(return_target: String = "title") -> void:
+ 	_set_ui_screen_id(&"input_config")
+ 	options_return_target = return_target
+ 	run_state = STATE_INPUT_CONFIG
+ 	var settings: Dictionary = _settings_data()
++	if USE_APPROVED_UI_WIRING_B2 and _show_approved_b2_input_config(settings):
++		return
+ 	var bindings: Dictionary = _normalize_input_bindings(settings.get("inputBindings", {}))
+ 	var conflicts: Array = _input_binding_conflict_lines(bindings)
+ 	_show_menu_shell(_localized_text("screen.input_config"), "移動、決定、戻る、一時停止、シーン表示操作の割り当てを変更します。")
+@@ -15931,10 +16113,9 @@
+ 
+ func _render_boundary_shop() -> void:
+ 	run_state = STATE_BOUNDARY_SHOP
+-	# The boundary shop reuses the generic pause/menu shell. Keeping it off the
+-	# authored round-result descriptor prevents the mock-direct layout adapter
+-	# from treating shop cards as return/continue result widgets.
+-	_set_ui_screen_id(&"pause")
++	# Own audited identity. The pause overlay must stay a pause-only ID so
++	# screen-audit and the mock-direct adapter cannot treat shop cards as pause widgets.
++	_set_ui_screen_id(&"boundary_shop")
+ 	_clear_overlay_panels()
+ 	var profile_id := str(stage.get("battleProfileId", battle_profile_id))
+ 	var title := "境界ショップ"

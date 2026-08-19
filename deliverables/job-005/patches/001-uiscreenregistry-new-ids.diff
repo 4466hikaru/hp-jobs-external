@@ -1,0 +1,28 @@
+--- a/game/scripts/ui/UiScreenRegistry.gd
++++ b/game/scripts/ui/UiScreenRegistry.gd
+@@ -53,6 +53,8 @@
+ 	&"new_game_confirm",
+ 	&"world_tile_map",
+ 	&"system_menu",
++	&"return_title_confirm",
++	&"boundary_shop",
+ ]
+ 
+ const MASTER_IDS := [&"M01", &"M02", &"M03", &"M04", &"M05", &"M06", &"M07", &"M08", &"M09", &"M10", &"M11"]
+@@ -106,6 +108,8 @@
+ 	&"options_language_text": &"M10",
+ 	&"input_config": &"M10",
+ 	&"system_menu": &"M10",
++	&"return_title_confirm": &"M01",
++	&"boundary_shop": &"M05",
+ 	&"awaken_cutin": &"M11",
+ }
+ 
+@@ -127,6 +131,7 @@
+ 	&"reset_confirm": {"overlay": &"danger_modal"},
+ 	&"unlock_confirm": {"overlay": &"danger_modal"},
+ 	&"save_delete_confirm": {"overlay": &"danger_modal"},
++	&"return_title_confirm": {"overlay": &"danger_modal"},
+ 	&"loading_transition": {"density": &"sparse", "overlay": &"transition"},
+ 	&"alert_overlay": {"overlay": &"alert"},
+ 	&"pause": {"overlay": &"pause_modal"},
