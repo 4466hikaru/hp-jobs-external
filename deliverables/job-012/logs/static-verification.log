@@ -1,0 +1,16 @@
+=== git apply --check 001 (against Main.gd from gh api 92ff9cdc) ===
+APPLY_CHECK_OK
+
+=== CR count (must be 0) ===
+  0  README.md
+  0  logs/honest-unverified.md
+  0  logs/static-verification.log
+  0  patches/001-ui-staging-image2-flag.diff
+  0  tests/test_job012_flag_headless.gd
+  0  tests/test_job012_static_flag.py
+CR=0 OK
+
+=== static test on patched tree ===
+PASS job-012 static flag
+
+Godot headless: NOT RUN (mirror asset-stripped)
