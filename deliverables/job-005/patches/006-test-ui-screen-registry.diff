@@ -1,0 +1,41 @@
+--- a/game/tests/test_ui_screen_registry.gd
++++ b/game/tests/test_ui_screen_registry.gd
+@@ -11,6 +11,7 @@
+ 	"scene_choice", "scene_choice_result", "credits_license", "boot_splash", "age_gate", "save_load_menu",
+ 	"save_delete_confirm", "motion_check", "adult_viewer_gate", "enhance_preview", "item_detail",
+ 	"new_game_confirm", "world_tile_map", "system_menu",
++	"return_title_confirm", "boundary_shop",
+ ]
+ 
+ var failures := 0
+@@ -22,7 +23,7 @@
+ 	_test_unknown_ids()
+ 	_test_validation_guards()
+ 	if failures == 0:
+-		print("UiScreenRegistry: 49 screens and 11 master groups verified")
++		print("UiScreenRegistry: 51 screens and 11 master groups verified")
+ 		quit(0)
+ 	else:
+ 		push_error("UiScreenRegistry: %d test(s) failed" % failures)
+@@ -31,18 +32,18 @@
+ 
+ func _test_exact_ordered_inventory() -> void:
+ 	var ids := Registry.ordered_ids()
+-	_expect(ids.size() == 49, "registry contains exactly 49 audited IDs")
++	_expect(ids.size() == 51, "registry contains exactly 51 audited IDs")
+ 	var seen := {}
+ 	for index in EXPECTED_IDS.size():
+ 		_expect(str(ids[index]) == EXPECTED_IDS[index], "audit order %d is %s" % [index + 1, EXPECTED_IDS[index]])
+ 		seen[ids[index]] = true
+-	_expect(seen.size() == 49, "all audited IDs are unique")
++	_expect(seen.size() == 51, "all audited IDs are unique")
+ 
+ 
+ func _test_descriptors_and_master_coverage() -> void:
+ 	var represented := {}
+ 	var descriptors := Registry.descriptors()
+-	_expect(descriptors.size() == 49, "every audited ID has a descriptor")
++	_expect(descriptors.size() == 51, "every audited ID has a descriptor")
+ 	for descriptor in descriptors:
+ 		for field in ["id", "master", "shell", "backdrop", "density", "overlay"]:
+ 			_expect(descriptor.has(field), "%s descriptor has %s" % [descriptor.get("id", "unknown"), field])

@@ -1,0 +1,31 @@
+--- a/tools/screen-audit/screen-inventory.json
++++ b/tools/screen-audit/screen-inventory.json
+@@ -543,6 +543,28 @@
+       "screenshot": "49_system_menu.png",
+       "desiredRole": "設定、セーブ/ロード、クレジット等の共通機能へ遷移する。",
+       "currentNotes": "監査専用の隔離画面を除き、プレイヤー向けのシステム導線を集約する。"
++    },
++    {
++      "id": "return_title_confirm",
++      "order": 49,
++      "titleJa": "町からタイトルへ戻る確認",
++      "group": "起動・基本導線",
++      "requiredForSale": true,
++      "currentStatus": "captured",
++      "screenshot": "50_return_title_confirm.png",
++      "desiredRole": "町メニューからタイトルへ戻る前に、準備内容が保持されることを確認する。",
++      "currentNotes": "旧 save_delete_confirm 使い回しを分離した町→タイトル確認。B/ESCは町へ戻る。"
++    },
++    {
++      "id": "boundary_shop",
++      "order": 50,
++      "titleJa": "ダンジョン境界ショップ",
++      "group": "ダンジョン",
++      "requiredForSale": true,
++      "currentStatus": "captured",
++      "screenshot": "51_boundary_shop.png",
++      "desiredRole": "ラウンド境界で強化を購入またはスキップして次ラウンドへ進む。",
++      "currentNotes": "旧 pause ID 使い回しを分離した境界ショップ。ポーズとは別キャプチャ対象。"
+     }
+   ],
+   "missingProductionScreens": [],
