@@ -93,6 +93,18 @@ def main() -> int:
         fail("pause 設定 is missing the hex frame underlay")
     if "Rect2(430.0, 598.0, 420.0, 48.0)" in main_gd:
         fail("pause タイトルへ still uses the old 48px-tall bottom-hugging rect")
+    save_rect = re.search(
+        r'_add_approved_ui_wiring_b2_component_action\(view, "ui_wiring_b2_pause_save", Rect2\(([\d.]+), ([\d.]+), ([\d.]+), ([\d.]+)\)',
+        main_gd,
+    )
+    if not save_rect:
+        fail("pause save component action missing")
+    else:
+        sy = float(save_rect.group(2))
+        if sy >= 486.0:
+            fail(f"pause save y={sy} was not moved up from original 486")
+        if sy < 469.0:
+            fail(f"pause save y={sy} overlaps 設定 label (bottom 469)")
     title_rect = re.search(
         r'_add_approved_ui_wiring_b2_component_action\(view, "ui_wiring_b2_pause_title", Rect2\(([\d.]+), ([\d.]+), ([\d.]+), ([\d.]+)\)',
         main_gd,
@@ -102,8 +114,11 @@ def main() -> int:
     else:
         y = float(title_rect.group(2))
         h = float(title_rect.group(4))
-        if y + h > 690:
-            fail(f"pause タイトルへ bottom {y+h} is still too close to 720")
+        bottom = y + h
+        if bottom >= 646.0:
+            fail(f"pause タイトルへ bottom {bottom} must be < original 646")
+        if y > 576.0 and h >= 70.0:
+            fail(f"pause タイトルへ y={y} with h={h} exceeds y<=576 guideline")
         if h < 60:
             fail(f"pause タイトルへ height {h} is too short for the hex frame")
 

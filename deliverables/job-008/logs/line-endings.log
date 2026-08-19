@@ -1,0 +1,34 @@
+=== job-008 006 redo verification 2026-08-19T08:46:00Z (17:46 JST) ===
+Working tree: gh-api raw hp-game-share (Main.gd blob cf895716). Not a clone.
+Godot: not installed / not run. Transition 0.35s untouched.
+
+--- line endings (must be CR=0) ---
+001-gold-frame-content-inset.diff: bytes=3251 cr=0 lf=70 sha256=5ec559cfd983
+002-hide-leftover-adv-and-shell.diff: bytes=1777 cr=0 lf=39 sha256=1ac00353babf
+003-world-tile-map-header-width.diff: bytes=3415 cr=0 lf=20 sha256=92afc3e72263
+004-equipment-slots-label-clip.diff: bytes=5256 cr=0 lf=11 sha256=3ba589fe276c
+006-pause-hex-frames-margin.diff: bytes=2873 cr=0 lf=31 sha256=caf86a93abea
+--- git apply --check (live HEAD 001-004+006) ---
+001-gold-frame-content-inset.diff OK+applied
+002-hide-leftover-adv-and-shell.diff OK+applied
+003-world-tile-map-header-width.diff OK+applied
+004-equipment-slots-label-clip.diff OK+applied
+006-pause-hex-frames-margin.diff OK+applied
+--- git apply --check (live HEAD 006 only) ---
+006-pause-hex-frames-margin.diff OK+applied
+--- test_job008_static_layout.py (live + 001-004+006, no job-005) ---
+FAIL
+ - job-005 contract token missing: _set_ui_screen_id(&"boundary_shop")
+ - job-005 contract token missing: _push_ui_screen_overlay(&"return_title_confirm")
+exit 1
+--- applied coords ---
+pause_save: Rect2(430, 470, 420, 44) bottom=514 margin=206
+pause_retry: Rect2(430, 518, 420, 44) bottom=562 margin=158
+pause_title: Rect2(430, 566, 420, 70) bottom=636 margin=84
+settings_hex kept at y=400 h=70 bottom=470
+labels: resume 300-330, objective 385-413, settings 441-469; save y=470 does not overlap
+title bottom 636 < 646; below-screen margin 84px (was 74)
+--- 001-004 vs origin ---
+(no diff, hunks unchanged)
+--- Godot headless ---
+SKIP: Godot is not installed on this box. hp-game-share not cloned.

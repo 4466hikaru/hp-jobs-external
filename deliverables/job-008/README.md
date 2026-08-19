@@ -52,7 +52,7 @@ godot --path game --headless --script res://tests/test_job008_layout_headless.gd
 | `patches/002-hide-leftover-adv-and-shell.diff` | 1 (01_title 二系統UI) / 35 (18_scene_log ADV漏れ) | `_layout_ui` が B1/B2/B3 approved view 中は `menu_panel` を隠す。scene_log 中は ADV overlay を隠してから layout |
 | `patches/003-world-tile-map-header-width.diff` | 87 (48_world_tile_map 省略) | 地点 156 / 危険度 136 / 調査 52 / 黒貨 118。resource_hud 下地 790×490。4欄は残す（情報削除なし） |
 | `patches/004-equipment-slots-label-clip.diff` | 27 (14_equipment_slots ラベル欠け) | slot_cards を y=500 h=36 へ（旧 y=535 h=28 で下半分クリップ） |
-| `patches/006-pause-hex-frames-margin.diff` | 57-58 (32_pause 設定/タイトルへ) | 設定の下に既存 hex (`pause_options_button`) を TextureRect で敷く（新ボタン/ヒット無し、z=-1）。タイトルへを 70px・下端 672 |
+| `patches/006-pause-hex-frames-margin.diff` | 57-58 (32_pause 設定/タイトルへ) | 設定 hex は y=400 h=70 のまま（枠欠け対策）。セーブ/リトライ/タイトルへを上へ。タイトル Rect2(430, 566, 420, 70) 下端 **636**（元 646、前回誤って 672）。下マージン 84px（元 74px） |
 
 005 は欠番。title hide は 002 に同居（隣接 hunk）。
 
@@ -105,3 +105,11 @@ gallery / run_history / credits / age_gate / save_delete / motion / system は�
 2. title 左メニューが PNG 焼き込みなら、コードでは消せない（アート側）
 3. 08 の `[仮]` も同様にアート側の公算
 4. shop 二重枠を focus と hover のどちらを残すか
+
+## 006 作り直し（PR#8 差し戻し）
+
+前回の 006 はタイトル枠を 48→70px にした分を**下へ足して**下端 646→672 にした。job-004 の指摘は「最下段が画面下に近すぎる」なので逆方向だった。
+
+今回: リスト全体を上へ。設定 hex（y=400 h=70、枠アセット流用）は残す。セーブ Rect2(430, 470, 420, 44) / リトライ (430, 518, 420, 44) / タイトルへ (430, 566, 420, 70)。下端 636 < 646。再開/目的/設定ラベル（設定 slot bottom 469）とは重ならない。
+
+パッチは LF only（\n、CR 禁止）。001-004 の hunk は未変更（もともと LF）。Godot 未実行。遷移 0.35s は未変更。
