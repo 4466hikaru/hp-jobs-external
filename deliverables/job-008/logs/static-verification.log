@@ -1,0 +1,30 @@
+=== job-008 static verification 2026-08-19T05:57:12Z (14:57 JST) ===
+Working tree: gh-api fetched hp-game-share files (not a git clone).
+job-005-applied extract + job-008 patches: /tmp/job008-check
+live HEAD + job-008 patches: /tmp/job008-live-apply
+
+--- test_job008_static_layout.py (job-005 + job-008) ---
+PASS job-008 static layout checks
+exit 0
+
+--- test_job008_static_layout.py (live HEAD + job-008, no job-005) ---
+FAIL
+ - job-005 contract token missing: _set_ui_screen_id(&"boundary_shop")
+ - job-005 contract token missing: _push_ui_screen_overlay(&"return_title_confirm")
+(expected: apply job-005 first for the full contract. job-008 hunks themselves apply to live HEAD.)
+
+--- unpatched extract ---
+FAIL (MENU_PANEL_FRAME_INSET missing, leftover ADV, tile-map 75px, slot y=535, pause 48px title)
+
+--- git apply --check (live HEAD, then job-005 extract) ---
+001-gold-frame-content-inset.diff OK
+002-hide-leftover-adv-and-shell.diff OK
+003-world-tile-map-header-width.diff OK
+004-equipment-slots-label-clip.diff OK
+006-pause-hex-frames-margin.diff OK
+
+--- Godot headless ---
+SKIP: Godot is not installed on this box, and hp-game-share is an asset-stripped mirror.
+Cannot run game/tests/test_job008_layout_headless.gd here.
+That script waits >=0.35s after init (job-005 lesson) before any UI read.
+Must be run on a playable checkout after applying patches.

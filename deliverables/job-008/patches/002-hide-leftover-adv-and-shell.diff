@@ -1,0 +1,39 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -5142,12 +5146,20 @@
+ 		else:
+ 			menu_panel.size = menu_size
+ 			menu_panel.position = (viewport_size - menu_size) * 0.5
+-		if approved_ui_wiring_b3_view != null and is_instance_valid(approved_ui_wiring_b3_view):
++		if (
++			(approved_ui_wiring_b1_view != null and is_instance_valid(approved_ui_wiring_b1_view))
++			or (approved_ui_wiring_b2_view != null and is_instance_valid(approved_ui_wiring_b2_view))
++			or (approved_ui_wiring_b3_view != null and is_instance_valid(approved_ui_wiring_b3_view))
++		):
++			# Approved 1:1 views replace the legacy shell. Leaving MenuPanel
++			# visible is the title dual-UI (left vertical + center buttons).
+ 			menu_panel.visible = false
+ 	if scene_adv_overlay != null:
+ 		scene_adv_overlay.position = Vector2.ZERO
+ 		scene_adv_overlay.size = viewport_size
+-		scene_adv_overlay.visible = layout_state == STATE_SCENE_VIEW and not scene_ui_hidden
++		# Log is an overlay on SCENE_VIEW; keep the ADV chrome fully hidden so
++		# the body line and next-triangle cannot leak under the log panel.
++		scene_adv_overlay.visible = layout_state == STATE_SCENE_VIEW and not scene_ui_hidden and not _scene_log_is_open()
+ 	if layout_state == STATE_SCENE_VIEW and not scene_ui_hidden:
+ 		var scene_dialogue_size := Vector2(
+ 			maxf(360.0, viewport_size.x * ADV_DIALOGUE_WIDTH_RATIO),
+@@ -12782,10 +12809,12 @@
+ 	if scene_log_overlay == null or scene_log_panel == null:
+ 		return
+ 	_push_ui_screen_overlay(&"scene_log")
+-	_layout_ui(true)
+ 	_rebuild_scene_log_overlay()
+ 	scene_log_overlay.visible = true
+ 	scene_log_overlay.move_to_front()
++	if scene_adv_overlay != null:
++		scene_adv_overlay.visible = false
++	_layout_ui(true)
+ 	_show_overlay_panel_with_transition(scene_log_panel)
+ 
+ 

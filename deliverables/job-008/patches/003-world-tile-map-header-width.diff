@@ -1,0 +1,20 @@
+--- a/game/scripts/ui/Stage4MassBatch2.gd
++++ b/game/scripts/ui/Stage4MassBatch2.gd
+@@ -102,14 +102,14 @@
+ 		"approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/14_タイルフィールド.png",
+ 		"components": [
+ 			{"id": "map_header", "source_rect": [0, 0, 270, 58], "target_rect": [0, 0, 270, 58], "clear_rects": [[65, 10, 190, 40]]},
+-			{"id": "resource_hud", "source_rect": [790, 0, 470, 55], "target_rect": [790, 0, 470, 55], "clear_rects": []},
++			{"id": "resource_hud", "source_rect": [790, 0, 490, 58], "target_rect": [790, 0, 490, 58], "clear_rects": []},
+ 			{"id": "bottom_actions", "source_rect": [445, 668, 335, 52], "target_rect": [445, 668, 335, 52], "clear_rects": [[522, 675, 65, 35], [708, 675, 65, 35]]},
+ 		],
+ 		"regions": [
+ 			{"id": "location_name", "rect": [65, 10, 190, 40], "font_size": 22, "maximum": 8, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "heading_large", "ellipsis_terms": ["街道", "礼拝堂", "現在地"], "component_ids": ["map_header"]},
+-			{"id": "tile_tooltips", "rect": [830, 8, 410, 36], "font_size": 15, "maximum": 4, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["地点", "危険度", "調査", "移動"], "slot_rects": [[830, 8, 75, 32], [945, 8, 75, 32], [1065, 8, 75, 32]], "component_ids": ["resource_hud", "resource_hud", "resource_hud"]},
++			{"id": "tile_tooltips", "rect": [798, 6, 352, 42], "font_size": 13, "maximum": 14, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "ellipsis_terms": ["地点", "危険度", "調査", "移動"], "slot_rects": [[798, 6, 156, 42], [958, 6, 136, 42], [1098, 6, 52, 42]], "component_ids": ["resource_hud", "resource_hud", "resource_hud"]},
+ 			{"id": "context_actions", "rect": [460, 675, 320, 35], "font_size": 14, "maximum": 12, "rows": 2, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "ellipsis_terms": ["調べる", "戻る"], "slot_rects": [[460, 675, 145, 35], [635, 675, 145, 35]], "component_ids": ["bottom_actions", "bottom_actions"]},
+-			{"id": "hud_labels", "rect": [1145, 8, 110, 32], "font_size": 15, "maximum": 6, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["資源", "危険度", "操作", "探索"], "slot_rects": [[1145, 8, 110, 32]], "component_ids": ["resource_hud"]},
++			{"id": "hud_labels", "rect": [1154, 6, 118, 42], "font_size": 13, "maximum": 16, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "ellipsis_terms": ["資源", "危険度", "操作", "探索"], "slot_rects": [[1154, 6, 118, 42]], "component_ids": ["resource_hud"]},
+ 		],
+ 		"default_state": {"location_name": ["朽ちた街道"], "tile_tooltips": ["地点: 霧の分岐", "危険度: 2", "調査できます"], "context_actions": ["調べる", "戻る"], "hud_labels": ["黒貨 120　素材 4　危険度 2", "移動: 方向キー　決定: 調査"]},
+ 		"longest_state": {"location_name": ["月影の礼拝堂へ続く朽ちた街道"], "tile_tooltips": ["地点: 月影の礼拝堂前", "危険度: 最高", "調査条件を確認"], "context_actions": ["調べる", "戻る"], "hud_labels": ["所持資源 黒貨 99999　素材 999　危険度 最大", "操作: 方向キーで移動し決定キーで調査を開始"]},
