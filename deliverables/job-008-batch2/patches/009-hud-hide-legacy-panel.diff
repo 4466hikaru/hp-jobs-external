@@ -1,0 +1,27 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -1307,8 +1307,24 @@
+ 	return true
+ 
+ 
++func _legacy_combat_hud_replaced() -> bool:
++	# UiIdealBatch1/CombatHudSlots is the live combat HUD. hud_panel is the
++	# leftover Control painter that _update_hud keeps re-showing.
++	if ui_layer == null:
++		return false
++	var slots := ui_layer.get_node_or_null("CombatHudSlots") as Control
++	return slots != null and is_instance_valid(slots)
++
++
+ func _sync_gameplay_hud_visibility() -> void:
+ 	var should_show: bool = _gameplay_hud_visible()
++	if _legacy_combat_hud_replaced():
++		# Keep the leftover panel hidden so HP / 絆 cannot ghost-draw.
++		if hud_panel != null:
++			hud_panel.visible = false
++		if hud_container != null:
++			hud_container.visible = false
++		return
+ 	if hud_panel != null:
+ 		hud_panel.visible = should_show
+ 	if hud_container != null:

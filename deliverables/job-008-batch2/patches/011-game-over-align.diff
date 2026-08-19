@@ -1,0 +1,30 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10503,10 +10503,13 @@
+ 		# actions, so only the in-bounds runtime buttons are visible.
+ 		var retired_action_grid := ColorRect.new()
+ 		retired_action_grid.name = "GameOverRetiredActionGridMask"
+-		retired_action_grid.position = Vector2(830.0, 345.0)
+-		retired_action_grid.size = Vector2(450.0, 140.0)
++		# Cover the live 140x42 cluster (starts x=800) plus the far-right
++		# leftover sample so red ornaments cannot peek beside the clip.
++		retired_action_grid.position = Vector2(800.0, 345.0)
++		retired_action_grid.size = Vector2(480.0, 140.0)
+ 		retired_action_grid.color = Color(0.025, 0.03, 0.05, 0.92)
+ 		retired_action_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
++		retired_action_grid.z_index = 0
+ 		view.add_child(retired_action_grid)
+ 	var primary_node := "ui_text_clear_next_action_01" if cleared else "ui_text_game_over_retry_action_01"
+ 	var town := _bind_approved_ui_wiring_b2_action(view, primary_node, Callable(self, "_transition_to_town_from_run_result"))
+@@ -10543,9 +10546,8 @@
+ 		var rect := clear_action_rects[index] as Rect2 if cleared else game_over_action_rects[index] as Rect2
+ 		var action_node := "ui_wiring_b2_%s_%s" % [screen_id, str(action.get("id", ""))]
+ 		_add_approved_ui_wiring_b2_component_action(view, action_node, rect, str(action.get("text", "")), callback, action_component, bool(action.get("disabled", false)), &"back" if str(action.get("id", "")) == "title" else &"action")
+-		if cleared:
+-			_clip_approved_b2_result_action(view, action_node, rect)
+-	if cleared and town != null:
++		_clip_approved_b2_result_action(view, action_node, rect)
++	if town != null:
+ 		town.z_index = 2
+ 	_focus_approved_ui_wiring_b2_button(town)
+ 	return true

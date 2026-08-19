@@ -1,0 +1,74 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10442,6 +10442,38 @@
+ 	return rows
+ 
+ 
++func _clip_approved_b2_result_action(view: Control, node_name: String, rect: Rect2) -> void:
++	# Result extra-actions reuse the 340x80 / 350x105 next/retry crop.  When
++	# TextureRect restores that native minimum, the banner overlaps neighbors
++	# and its cleared interior reads as a black mask.  Clip to the live rect
++	# and keep the label above the crop (align / clip / z-order only).
++	if view == null:
++		return
++	var component := view.get_node_or_null("ApprovedB2Component_%s" % node_name) as TextureRect
++	if component != null and component.get_parent() == view:
++		var clip := Control.new()
++		clip.name = "ApprovedB2Clip_%s" % node_name
++		clip.position = rect.position
++		clip.size = rect.size
++		clip.clip_contents = true
++		clip.mouse_filter = Control.MOUSE_FILTER_IGNORE
++		clip.z_index = 1
++		view.remove_child(component)
++		component.position = Vector2.ZERO
++		component.size = rect.size
++		component.custom_minimum_size = Vector2.ZERO
++		component.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
++		component.stretch_mode = TextureRect.STRETCH_SCALE
++		clip.add_child(component)
++		view.add_child(clip)
++	var button := view.get_node_or_null(node_name) as Button
++	if button != null:
++		button.position = rect.position
++		button.size = rect.size
++		button.alignment = HORIZONTAL_ALIGNMENT_CENTER
++		button.z_index = 2
++
++
+ func _show_approved_b2_result(cleared: bool) -> bool:
+ 	var screen_id := "clear" if cleared else "game_over"
+ 	var view: Control
+@@ -10489,11 +10521,13 @@
+ 		var reward_scene := _reward_scene_for_stage()
+ 		action_defs.insert(1, {"id": "scene", "text": "報酬シーン", "callback": Callable(self, "_show_clear_scene"), "disabled": reward_scene.is_empty()})
+ 	var clear_action_rects := [
+-		Rect2(895.0, 464.0, 160.0, 38.0),
+-		Rect2(1065.0, 464.0, 160.0, 38.0),
+-		Rect2(895.0, 508.0, 160.0, 38.0),
+-		Rect2(1065.0, 508.0, 160.0, 38.0),
+-		Rect2(895.0, 552.0, 160.0, 38.0),
++		# 38px rows with a 14px gap so clipped next-button crops cannot kiss.
++		# Last row bottom 594 stays 16px above 町へ (y=610).
++		Rect2(895.0, 452.0, 160.0, 38.0),
++		Rect2(1065.0, 452.0, 160.0, 38.0),
++		Rect2(895.0, 504.0, 160.0, 38.0),
++		Rect2(1065.0, 504.0, 160.0, 38.0),
++		Rect2(895.0, 556.0, 160.0, 38.0),
+ 	]
+ 	var game_over_action_rects := [
+ 		# Keep both the button and its separately drawn texture/glow inside the
+@@ -10507,7 +10541,12 @@
+ 		var action: Dictionary = action_defs[index]
+ 		var callback: Callable = action.get("callback", Callable()) as Callable
+ 		var rect := clear_action_rects[index] as Rect2 if cleared else game_over_action_rects[index] as Rect2
+-		_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_%s_%s" % [screen_id, str(action.get("id", ""))], rect, str(action.get("text", "")), callback, action_component, bool(action.get("disabled", false)), &"back" if str(action.get("id", "")) == "title" else &"action")
++		var action_node := "ui_wiring_b2_%s_%s" % [screen_id, str(action.get("id", ""))]
++		_add_approved_ui_wiring_b2_component_action(view, action_node, rect, str(action.get("text", "")), callback, action_component, bool(action.get("disabled", false)), &"back" if str(action.get("id", "")) == "title" else &"action")
++		if cleared:
++			_clip_approved_b2_result_action(view, action_node, rect)
++	if cleared and town != null:
++		town.z_index = 2
+ 	_focus_approved_ui_wiring_b2_button(town)
+ 	return true
+ 

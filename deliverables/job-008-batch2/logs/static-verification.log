@@ -1,0 +1,80 @@
+=== job-008 batch2 static verification 2026-08-19T08:29:28Z (17:29 JST) ===
+Working tree: gh-api fetched hp-game-share files (not a git clone).
+live HEAD blobs: Main.gd cf895716 / UiHoverOverlay.gd b9bdaa87
+virtual tree: /tmp/job008-batch2-apply  (git init over fetched files only)
+patches: deliverables/job-008-batch2/patches/ 007 → 008 → 009 → 010 → 011
+
+--- git apply --check (live HEAD, sequential) ---
+007-shop-single-selection-frame.diff OK
+008-sell-drop-provisional-label.diff OK
+009-hud-hide-legacy-panel.diff OK
+010-clear-overlap-mask.diff OK
+011-game-over-align.diff OK
+
+--- git apply --check 011 alone on HEAD ---
+error: patch failed: game/scripts/main/Main.gd:10543
+error: game/scripts/main/Main.gd: patch does not apply
+exit 1
+(expected: 011 is written against 010 context)
+
+--- test_job008_batch2_static.py (live HEAD + batch2 patches) ---
+PASS job-008 batch2 static layout checks
+exit 0
+
+--- test_job008_batch2_static.py (unpatched live HEAD) ---
+FAIL
+ - 007 missing _keep_approved_shop_row_focus_only
+ - 007 shop row builder does not call _keep_approved_shop_row_focus_only
+ - 007 shop rows must set ui_hover_suppress_hover_draw
+ - 007 UiHoverOverlay missing _hover_draw_suppressed
+ - 007 UiHoverOverlay must ignore pointer hover when suppressed
+ - 008 missing _shop_item_product_display_name
+ - 008 must strip a leading [仮] from live sell titles
+ - 008 sell cards / approved sell rows / summary must use product display name
+ - 008 sell cards still use raw _shop_item_display_name for title
+ - 009 missing _legacy_combat_hud_replaced
+ - 009 must detect CombatHudSlots
+ - _sync_gameplay_hud_visibility must early-out when CombatHudSlots is live
+ - legacy hud_panel must stay hidden when CombatHudSlots is live
+ - 010 missing _clip_approved_b2_result_action
+ - 010 clear_action_rects missing Rect2(895.0, 452.0, 160.0, 38.0)
+ - 010 clear_action_rects missing Rect2(1065.0, 452.0, 160.0, 38.0)
+ - 010 clear_action_rects missing Rect2(895.0, 504.0, 160.0, 38.0)
+ - 010 clear_action_rects missing Rect2(1065.0, 504.0, 160.0, 38.0)
+ - 010 clear_action_rects missing Rect2(895.0, 556.0, 160.0, 38.0)
+ - 010 leftover old 6px-gap rect Rect2(895.0, 464.0, 160.0, 38.0)
+ - 010 leftover old 6px-gap rect Rect2(895.0, 508.0, 160.0, 38.0)
+ - 010 leftover old 6px-gap rect Rect2(895.0, 552.0, 160.0, 38.0)
+ - 011 leftover mask origin must be (800, 345)
+ - 011 leftover mask size must be 480x140
+ - 011 leftover mask still starts at old x=830
+ - 011 leftover mask still uses old 450x140
+ - 011 must clip every result extra-action (clear and game_over)
+exit 1
+(expected: unpatched HEAD must fail these tokens)
+
+--- live HEAD contract tokens still present after batch2 ---
+["画面", "音量", "ゲーム", "戻る"] present
+func _show_run_history present
+_set_ui_screen_id(&"boundary_shop") absent on live HEAD (job-005 not applied; same as PR#8 live-only run)
+_push_ui_screen_overlay(&"return_title_confirm") absent on live HEAD (same)
+
+--- Godot headless ---
+SKIP: Godot is not installed on this box, and hp-game-share is an asset-stripped mirror.
+Cannot run game/tests/test_job008_batch2_layout_headless.gd here.
+That script waits >=0.35s after init (job-005 lesson) before any UI read.
+This batch does not change transition seconds.
+Must be run on a playable checkout after applying patches.
+
+--- notes ---
+PR#8 branch job/008-ui-defect-code-fixes was not checked out and not committed to.
+jobs/job-008-ui-defect-code-fixes.md status left open.
+game repo was not cloned.
+
+--- patch line endings (must be LF) ---
+007-shop-single-selection-frame.diff: before CR=0 -> after CR=0 LF=58 bytes=2519
+008-sell-drop-provisional-label.diff: before CR=0 -> after CR=0 LF=54 bytes=3346
+009-hud-hide-legacy-panel.diff: before CR=0 -> after CR=0 LF=27 bytes=868
+010-clear-overlap-mask.diff: before CR=0 -> after CR=0 LF=74 bytes=3483
+011-game-over-align.diff: before CR=0 -> after CR=0 LF=30 bytes=1753
+CR=0 patches=5 total_CR_after=0

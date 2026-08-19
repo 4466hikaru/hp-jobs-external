@@ -1,0 +1,54 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -9299,7 +9299,7 @@
+ 			if item.is_empty():
+ 				continue
+ 			sell_cards.append({
+-				"title": _shop_item_display_name(item),
++				"title": _shop_item_product_display_name(item),
+ 				"body": "%s / 所持 %d\n売却 %s" % [_item_category_label("consumable"), count, _localized_format("shop.balance", {"amount": int(item.get("sellPrice", 0))})],
+ 				"badges": "詳細",
+ 				"callback": _transition_to_inventory_item_detail.bind(shop_id, return_town_id, item_id, "item")
+@@ -9318,7 +9318,7 @@
+ 			if item.is_empty():
+ 				continue
+ 			sell_cards.append({
+-				"title": _shop_item_display_name(item),
++				"title": _shop_item_product_display_name(item),
+ 				"body": "%s / 所持 %d\n売却 %s" % [_item_category_label("material"), count, _localized_format("shop.balance", {"amount": int(item.get("sellPrice", 0))})],
+ 				"badges": "詳細",
+ 				"callback": _transition_to_inventory_item_detail.bind(shop_id, return_town_id, material_id, "material")
+@@ -10800,14 +10800,14 @@
+ 	for value in entries.slice(0, 4):
+ 		var entry := value as Dictionary
+ 		var item: Dictionary = entry["item"] as Dictionary
+-		rows.append("%s  所持 %d  売却 %d黒貨" % [_shop_item_display_name(item), int(entry["count"]), int(item.get("sellPrice", 0))])
++		rows.append("%s  所持 %d  売却 %d黒貨" % [_shop_item_product_display_name(item), int(entry["count"]), int(item.get("sellPrice", 0))])
+ 	while rows.size() < 4:
+ 		rows.append("売却品なし")
+ 	var selected: Dictionary = entries[0] as Dictionary if not entries.is_empty() else {}
+ 	var selected_item: Dictionary = selected.get("item", {}) as Dictionary
+ 	var summary := ["選択品なし", "", ""]
+ 	if not selected_item.is_empty():
+-		summary = ["選択中: %s" % _shop_item_display_name(selected_item), "売却価格: %d 黒貨" % int(selected_item.get("sellPrice", 0)), "売却保護: %s" % ("あり" if _inventory_item_locked(str(selected_item.get("id", ""))) else "なし")]
++		summary = ["選択中: %s" % _shop_item_product_display_name(selected_item), "売却価格: %d 黒貨" % int(selected_item.get("sellPrice", 0)), "売却保護: %s" % ("あり" if _inventory_item_locked(str(selected_item.get("id", ""))) else "なし")]
+ 	var view := UiWiringB3.build_view("sell_inventory", {"screen_title": [_localized_text("shop.sell_inventory")], "currency": ["所持黒貨 %d" % int(_currency_balance(_shop_currency_id()))], "inventory_rows": rows, "sell_summary": summary, "detail_action": ["詳細を見る"], "back_action": ["商店へ戻る"]})
+ 	view.set_meta("b3_live_sell_count", entries.size())
+ 	if not _install_approved_ui_wiring_b3_view(&"sell_inventory", view):
+@@ -22144,6 +22144,16 @@
+ 	return str(item.get("displayNameJa", item.get("id", "")))
+ 
+ 
++func _shop_item_product_display_name(item: Dictionary) -> String:
++	# shops.json gift placeholders still carry a "[仮]" prefix. Sell rows were
++	# drawing that debug label over the icon band (job-004 08). Do not invent a
++	# hide if the approved PNG is also baked; just stop the live text.
++	var name := _shop_item_display_name(item)
++	if name.begins_with("[仮]"):
++		return name.substr(3).strip_edges()
++	return name
++
++
+ func _item_category_label(item_type: String) -> String:
+ 	var key := "item_category.%s" % item_type
+ 	var localized := _localized_text(key)
