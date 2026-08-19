@@ -1,0 +1,100 @@
+age_gate_frame_v001_c48.png
+  size: 1560x960
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+confirm_modal_frame_v001_c40.png
+  size: 1440x840
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+iron_secondary_button_v001_c16.png
+  size: 480x112
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+iron_secondary_button_v001_focus_c16.png
+  size: 480x112
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+legal_scroll_frame_v001_c16.png
+  size: 1280x1040
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+main_menu_frame_v001_c32.png
+  size: 640x960
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+ruby_primary_button_v001_c16.png
+  size: 480x112
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+ruby_primary_button_v001_focus_c16.png
+  size: 480x112
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+save_slot_frame_v001_c24.png
+  size: 2160x400
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 8
+  RESULT: OK
+
+startup_backdrop_v001.png
+  size: 2560x1440
+  mode: RGB
+  has_alpha: False
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 0
+  RESULT: OK (excepted)
+
+startup_vignette_v001.png
+  size: 2560x1440
+  mode: RGBA
+  has_alpha: True
+  fringe_count: 0
+  fringe_by_hue_bucket: magenta=0, purple=0, green=0, cyan=0, red=0, yellow=0, white=0, other=0
+  min_opaque_margin: 0
+  RESULT: OK
+
+summary: 11 OK, 0 FAIL / 11 files

@@ -1,6 +1,6 @@
 # job-007: UIパーツ バッチ1 再挑戦 — 別ラインとの比較評価
 
-- status: open
+- status: in-progress(game)
 - 難度: 高(画像生成+規格遵守)
 - 納品方法: A(branch `job/007` → PR)
 
