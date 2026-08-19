@@ -1,0 +1,45 @@
+hp-game-share HEAD 92ff9cdc66c9aa588f75b3665d03bc98ceea1527
+Main.gd blob cf8957160449c31fcfdfe2b2488d834cc3b2108e
+UiHoverOverlay.gd blob b9bdaa870331462b06ca9086decaa887b303be11
+
+=== isolated git apply --check ===
+OK 006-pause-hex-frames-margin
+OK 020-save-delete-align
+OK 024-options-single-chrome
+
+=== stacked apply 006 -> 020 -> 024 ===
+OK apply 006
+OK apply 020
+OK apply 024
+
+=== CR counts ===
+006-pause-hex-frames-margin.diff CR 0 LF 31 bytes 2873
+020-save-delete-align.diff CR 0 LF 21 bytes 1375
+024-options-single-chrome.diff CR 0 LF 70 bytes 3781
+Main.gd after apply CR 0
+UiHoverOverlay.gd after apply CR 0
+
+=== static unpatched ===
+FAIL
+ - 020 _add_info_card must take alignment
+ - 020 delete confirm card must be centered
+ - 020 info card title must honor alignment
+ - 024 missing _keep_approved_options_nav_focus_only
+ - 024 options nav must set ui_hover_suppress_hover_draw
+ - 024 must retarget baked ゲーム crop
+ - 024 UiHoverOverlay missing _hover_draw_suppressed
+ - 024 overlay must ignore pointer hover when suppressed
+ - 024 overlay hook must appear once
+ - 006 pause 設定 is missing the hex frame underlay
+ - 006 pause タイトルへ still uses the original 48px-tall rect
+ - 006 pause save y=486.0 was not moved UP from original 486
+ - 006 pause title must be Rect2(430, 566, 420, 70); got y=598.0 h=48.0
+ - 006 pause title bottom 646.0 must be 636
+ - 006 pause title bottom 646.0 must be < original 646 (UP, not DOWN)
+ - 006 pause bottom margin 74.0 must be 84px
+
+=== static patched ===
+PASS job-008 batch4 static layout checks
+
+=== godot ===
+godot not installed; headless 未実行

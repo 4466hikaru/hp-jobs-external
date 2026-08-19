@@ -1,0 +1,21 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -7463,3 +7463,3 @@ func _show_save_delete_confirm
+-	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default")
++	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default", HORIZONTAL_ALIGNMENT_CENTER)
+ 	_add_menu_button(_localized_text("ui.save_load.delete_confirm.confirm"), _delete_slot_1_save, "danger")
+ 	_add_menu_button(_localized_text("ui.save_load.delete_confirm.cancel"), _cancel_save_delete_confirm)
+@@ -14329,2 +14329,2 @@ func _add_info_card
+-func _add_info_card(title: String, lines: Array, variant: String = "default") -> void:
++func _add_info_card(title: String, lines: Array, variant: String = "default", alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT) -> void:
+ 	var panel := PanelContainer.new()
+@@ -14340,2 +14340,4 @@ func _add_info_card
+ 	title_label.text = title
++	title_label.horizontal_alignment = alignment
++	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ 	title_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+@@ -14350,2 +14352,4 @@ func _add_info_card
+ 		label.text = str(line)
++		label.horizontal_alignment = alignment
++		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
