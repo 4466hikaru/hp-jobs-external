@@ -1,0 +1,11 @@
+--- a/game/scripts/worldmap/WorldMap.gd
++++ b/game/scripts/worldmap/WorldMap.gd
+@@ -638,6 +638,7 @@ func _node_draw_position(map_rect: Rect2, node: Dictionary) -> Vector2:
+ func _node_draw_position(map_rect: Rect2, node: Dictionary) -> Vector2:
+ 	var position: Dictionary = node.get("positionNormalized", {})
+-	return map_rect.position + map_rect.size * Vector2(float(position.get("x", 0.5)), float(position.get("y", 0.5)))
++	# Integer snap keeps connection lines on the same pixel as icon bodies.
++	return (map_rect.position + map_rect.size * Vector2(float(position.get("x", 0.5)), float(position.get("y", 0.5)))).round()
+ 
+ 
+ func _node_color(kind: String, state: String) -> Color:

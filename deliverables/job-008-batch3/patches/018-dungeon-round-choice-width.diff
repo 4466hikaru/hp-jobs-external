@@ -1,0 +1,11 @@
+--- a/game/scripts/ui/Stage4MassBatch4.gd
++++ b/game/scripts/ui/Stage4MassBatch4.gd
+@@ -52,7 +52,7 @@
+ 		"regions": [
+ 			{"id": "round_title", "rect": [470, 42, 340, 34], "font_size": 20, "maximum": 16, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "component_ids": ["title_band"]},
+ 			{"id": "choice_actions", "rect": [535, 175, 145, 183], "font_size": 15, "maximum": 16, "rows": 2, "kind": "action_column", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "slot_rects": [[535, 175, 145, 28], [535, 330, 145, 28]], "component_ids": ["choice_01", "choice_02"]},
+-			{"id": "choice_detail", "rect": [535, 215, 145, 175], "font_size": 12, "maximum": 14, "rows": 2, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "slot_rects": [[535, 215, 145, 20], [535, 370, 145, 20]], "component_ids": ["choice_01", "choice_02"]},
++			{"id": "choice_detail", "rect": [535, 215, 280, 181], "font_size": 12, "maximum": 28, "rows": 2, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "slot_rects": [[535, 215, 280, 26], [535, 370, 280, 26]], "component_ids": ["choice_01", "choice_02"]},
+ 		],
+ 		"default_state": {"round_title": ["継続と帰還"], "choice_actions": ["続行する", "帰還する"], "choice_detail": ["報酬倍率を上げて次へ", "確定報酬を持ち帰る"]},
+ 		"longest_state": {"round_title": ["月影の礼拝堂・継続判断"], "choice_actions": ["次のラウンドへ続行する", "今の報酬を確定して帰還する"], "choice_detail": ["敗北で未確定分を失う", "確定報酬を安全に持ち帰る"]},

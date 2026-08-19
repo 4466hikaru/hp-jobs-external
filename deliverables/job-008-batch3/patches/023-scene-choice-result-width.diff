@@ -1,0 +1,83 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -149,8 +149,10 @@
+ # above the dialogue body's fixed 32px padding start.
+ const ADV_NAME_TAB_OVERLAP := ADV_DIALOGUE_CONTENT_PADDING - 12.0
+ const ADV_CHOICE_HEIGHT := 72.0
++const ADV_CHOICE_RESULT_HEIGHT := 112.0
+ const ADV_CHOICE_MIN_WIDTH_RATIO := 0.45
+ const ADV_CHOICE_MAX_WIDTH_RATIO := 0.60
++const ADV_CHOICE_RESULT_MAX_WIDTH_RATIO := 0.76
+ const ADV_CHOICE_ROW_GAP := 16.0
+ const ADV_QUICK_BUTTON_SIZE := Vector2(96.0, 56.0)
+ const ADV_QUICK_BUTTON_GAP := 8
+@@ -5250,14 +5252,20 @@
+ 		for card: Node in scene_choice_stack.get_children():
+ 			if card is Button:
+ 				longest_label_length = maxi(longest_label_length, (card as Button).tooltip_text.length())
+-			elif card.get_child_count() > 0 and card.get_child(0) is Label:
+-				longest_label_length = maxi(longest_label_length, (card.get_child(0) as Label).text.length())
++			else:
++				for node in card.find_children("*", "Label", true, false):
++					longest_label_length = maxi(longest_label_length, (node as Label).text.length())
++	var is_result := scene_choice_buttons.is_empty()
++	var max_ratio := ADV_CHOICE_RESULT_MAX_WIDTH_RATIO if is_result else ADV_CHOICE_MAX_WIDTH_RATIO
+ 	var content_ratio := clampf(
+-		ADV_CHOICE_MIN_WIDTH_RATIO + float(longest_label_length) / 52.0 * (ADV_CHOICE_MAX_WIDTH_RATIO - ADV_CHOICE_MIN_WIDTH_RATIO),
++		ADV_CHOICE_MIN_WIDTH_RATIO + float(longest_label_length) / 52.0 * (max_ratio - ADV_CHOICE_MIN_WIDTH_RATIO),
+ 		ADV_CHOICE_MIN_WIDTH_RATIO,
+-		ADV_CHOICE_MAX_WIDTH_RATIO
++		max_ratio
+ 	)
+-	return minf(viewport_width * content_ratio, dialogue_width - ADV_DIALOGUE_CONTENT_PADDING * 2.0)
++	var width_cap := dialogue_width - ADV_DIALOGUE_CONTENT_PADDING * 2.0
++	if is_result:
++		width_cap = minf(viewport_width * max_ratio, viewport_width - 80.0)
++	return minf(viewport_width * content_ratio, width_cap)
+ 
+ 
+ func _make_adv_nine_patch(texture_name: String, _patch_margin: int, _vertical_patch_margin: int = -1) -> PanelContainer:
+@@ -12866,29 +12874,36 @@
+ 	if scene_choice_stack == null:
+ 		return
+ 	scene_choice_stack.visible = true
+-	scene_choice_stack.custom_minimum_size = Vector2(0.0, ADV_CHOICE_HEIGHT)
++	scene_choice_stack.custom_minimum_size = Vector2(0.0, ADV_CHOICE_RESULT_HEIGHT)
+ 	var choice: Dictionary = result.get("choice", {})
+ 	var result_bar := _make_adv_nine_patch("ui_adv_choice_bar_selected", ADV_CHOICE_PATCH_MARGIN, ADV_CHOICE_VERTICAL_PATCH_MARGIN)
+-	result_bar.custom_minimum_size = Vector2(0.0, ADV_CHOICE_HEIGHT)
++	result_bar.custom_minimum_size = Vector2(0.0, ADV_CHOICE_RESULT_HEIGHT)
+ 	result_bar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ 	scene_choice_stack.add_child(result_bar)
++	# Fixed-height host: wrap the result line without letting Label min-size
++	# expand the stack before the gold bar width is resolved.
++	var clip_host := Control.new()
++	clip_host.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	clip_host.custom_minimum_size = Vector2(0.0, ADV_CHOICE_RESULT_HEIGHT)
++	clip_host.size_flags_horizontal = Control.SIZE_EXPAND_FILL
++	clip_host.clip_contents = true
++	result_bar.add_child(clip_host)
+ 	var label := Label.new()
+ 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+ 	label.text = "%s  —  %s" % [_scene_choice_label(choice), _scene_choice_result_text(choice)]
+-	# This is one result row, not an expanding log entry. AUTOWRAP would derive a
+-	# height before the anchored width is resolved and grow the stack beyond the
+-	# viewport in the deterministic audit state.
+-	label.autowrap_mode = TextServer.AUTOWRAP_OFF
++	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+ 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ 	label.clip_text = true
+ 	label.set_anchors_preset(Control.PRESET_FULL_RECT)
+ 	label.offset_left = 40.0
+ 	label.offset_right = -40.0
++	label.offset_top = 8.0
++	label.offset_bottom = -8.0
+ 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+ 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+ 	label.add_theme_font_size_override("font_size", UiSkin.FONT_SIZE_BODY)
+ 	label.add_theme_color_override("font_color", Color("#fff4df"))
+-	result_bar.add_child(label)
++	clip_host.add_child(label)
+ 
+ func _build_scene_choice_card_content(button: Button, choice: Dictionary, index: int) -> void:
+ 	var title := Label.new()

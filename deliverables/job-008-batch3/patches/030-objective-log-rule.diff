@@ -1,0 +1,20 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10165,6 +10165,17 @@ func _show_approved_b2_objective_log(card: Dictionary) -> bool:
+ 		"objective_rows": next_rows,
+ 		"close_action": ["戻る"],
+ 	})
++	# Card 03's approved crop still carries a leftover rule that runs to the
++	# frame; cover only the empty right of that row so reward copy stays put.
++	var card03 := view.get_node_or_null("ApprovedComponent_objective_card_03") as TextureRect
++	if card03 != null:
++		var leftover_rule := ColorRect.new()
++		leftover_rule.name = "ObjectiveCard03LeftoverRuleMask"
++		leftover_rule.position = card03.position + Vector2(300.0, 22.0)
++		leftover_rule.size = Vector2(maxf(8.0, card03.size.x - 316.0), 48.0)
++		leftover_rule.color = Color("111519")
++		leftover_rule.mouse_filter = Control.MOUSE_FILTER_IGNORE
++		view.add_child(leftover_rule)
+ 	if not _install_approved_ui_wiring_b2_view(&"objective_log", view):
+ 		return false
+ 	var node_id := str(card.get("nodeId", ""))

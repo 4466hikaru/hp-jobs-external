@@ -1,0 +1,41 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10880,6 +10880,21 @@
+ 	return result
+ 
+ 
++func _center_character_select_button_caption(button: Button) -> void:
++	# 戻る / 出撃する sit on the top edge of the approved plate. Button has no
++	# vertical text alignment; extra top pad drops CJK glyphs onto the plate center.
++	if button == null:
++		return
++	var plate := StyleBoxEmpty.new()
++	var extra_top := maxf(16.0, floorf((button.size.y - 16.0) * 0.28))
++	plate.content_margin_left = 8.0
++	plate.content_margin_right = 8.0
++	plate.content_margin_top = extra_top
++	plate.content_margin_bottom = maxf(6.0, extra_top - 10.0)
++	for style_name in ["normal", "hover", "pressed", "disabled", "focus"]:
++		button.add_theme_stylebox_override(style_name, plate)
++
++
+ func _show_approved_b3_character_select() -> bool:
+ 	var characters := _b3_roster_characters()
+ 	var rows: Array = []
+@@ -10919,8 +10934,14 @@
+ 		var card := _add_approved_ui_wiring_b3_hotspot(view, "ui_wiring_b3_character_%02d" % (index + 1), card_rects[index], Callable(self, "_select_character").bind(str(character.get("id", ""))), not _is_character_unlocked(character), &"card", _localized_text(str(character.get("nameKey", ""))))
+ 		if first == null and card != null and not card.disabled:
+ 			first = card
+-	_bind_approved_ui_wiring_b3_action(view, "ui_text_character_select_confirm_action_01", Callable(self, "_start_selected_run_with_transition"), selected.is_empty(), &"action")
+-	_add_approved_ui_wiring_b3_component_action(view, "ui_wiring_b3_character_back", Rect2(840.0, 620.0, 180.0, 65.0), "戻る", Callable(self, "_transition_return_from_build_menu"), "res://assets/ui/ui_mass_batch3_v2/components/character_select_confirm_button_v002.png", false, &"back")
++	var confirm := _bind_approved_ui_wiring_b3_action(view, "ui_text_character_select_confirm_action_01", Callable(self, "_start_selected_run_with_transition"), selected.is_empty(), &"action")
++	if confirm != null:
++		# Fill the approved confirm plate so the caption can sit on its vertical center.
++		confirm.position = Vector2(852.0, 512.0)
++		confirm.size = Vector2(346.0, 86.0)
++		_center_character_select_button_caption(confirm)
++	var back := _add_approved_ui_wiring_b3_component_action(view, "ui_wiring_b3_character_back", Rect2(840.0, 620.0, 180.0, 65.0), "戻る", Callable(self, "_transition_return_from_build_menu"), "res://assets/ui/ui_mass_batch3_v2/components/character_select_confirm_button_v002.png", false, &"back")
++	_center_character_select_button_caption(back)
+ 	_focus_approved_ui_wiring_b3_button(first)
+ 	return true
+ 

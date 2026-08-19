@@ -1,0 +1,47 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -11022,12 +11022,32 @@
+ 	if not _install_approved_ui_wiring_b3_view(&"enhance_preview", view):
+ 		return false
+ 	_add_approved_ui_wiring_b3_label(view, "ui_wiring_b3_enhance_profile", Rect2(55.0, 122.0, 295.0, 250.0), "%s\nランク %d → %d\n親密度 %.0f\n実行機能は未接続\n試算のみ確認できます" % [name, current_rank, next_rank, _companion_affection_value(companion)], 17, HORIZONTAL_ALIGNMENT_CENTER)
+-	_add_approved_ui_wiring_b3_label(view, "ui_wiring_b3_enhance_companions", Rect2(48.0, 530.0, 310.0, 145.0), "対象ヒロイン %d名\n%s" % [unlocked_names.size(), " / ".join(unlocked_names)], 14, HORIZONTAL_ALIGNMENT_CENTER)
++	_add_approved_ui_wiring_b3_label(view, "ui_wiring_b3_enhance_companions", Rect2(40.0, 530.0, 326.0, 145.0), "対象ヒロイン %d名\n%s" % [unlocked_names.size(), _join_names_without_mid_break(unlocked_names)], 14, HORIZONTAL_ALIGNMENT_CENTER)
+ 	_bind_approved_ui_wiring_b3_action(view, "ui_text_enhance_preview_enhance_action_01", Callable(self, "_return_from_companion_enhance_preview"), false, &"back")
+ 	_focus_approved_ui_wiring_b3_button(view.get_node_or_null("ui_text_enhance_preview_enhance_action_01") as Button)
+ 	return true
+ 
+ 
++func _join_names_without_mid_break(names: Array) -> String:
++	var parts: PackedStringArray = []
++	for value in names:
++		var name := str(value)
++		if name.is_empty():
++			continue
++		parts.append(_prohibit_mid_word_break(name))
++	return " / ".join(parts)
++
++
++func _prohibit_mid_word_break(text: String) -> String:
++	# WORD JOINER keeps CJK names such as リリカ from wrapping mid-name.
++	if text.length() <= 1:
++		return text
++	var chars: PackedStringArray = []
++	for index in range(text.length()):
++		chars.append(text.substr(index, 1))
++	return char(0x2060).join(chars)
++
++
+ func _show_approved_b3_loading_transition() -> bool:
+ 	var destination := str(transition_card.get("title", "移動中"))
+ 	var objective := str(transition_card.get("objective", ""))
+--- a/game/scripts/ui/Stage4MassBatch2.gd
++++ b/game/scripts/ui/Stage4MassBatch2.gd
+@@ -184,7 +184,7 @@
+ 			{"id": "target_item", "rect": [425, 118, 285, 32], "font_size": 20, "maximum": 18, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_small", "ellipsis_terms": ["月影", "護符", "強化"], "component_ids": ["item_band"]},
+ 			{"id": "before_values", "rect": [490, 200, 180, 220], "font_size": 18, "maximum": 14, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["強化前", "体力", "攻撃", "防御"], "slot_rects": [[490, 205, 180, 40], [490, 255, 180, 40], [490, 305, 180, 40]], "component_ids": ["before_table", "before_table", "before_table"]},
+ 			{"id": "after_values", "rect": [805, 200, 190, 220], "font_size": 18, "maximum": 14, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["強化後", "体力", "攻撃", "防御"], "slot_rects": [[805, 205, 190, 40], [805, 255, 190, 40], [805, 305, 190, 40]], "component_ids": ["after_table", "after_table", "after_table"]},
+-			{"id": "cost", "rect": [440, 470, 390, 34], "font_size": 18, "maximum": 19, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["必要", "素材", "黒貨"], "component_ids": ["cost_band"]},
++			{"id": "cost", "rect": [430, 468, 530, 36], "font_size": 16, "maximum": 40, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "body", "ellipsis_terms": ["必要", "素材", "黒貨"], "component_ids": ["cost_band"]},
+ 			{"id": "enhance_action", "rect": [945, 625, 290, 55], "font_size": 18, "maximum": 20, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["強化", "実行"], "component_ids": ["enhance_button"]},
+ 		],
+ 		"default_state": {"screen_title": ["強化プレビュー"], "target_item": ["月影の護符 +1"], "before_values": ["強化前", "体力 +12", "防御 +3"], "after_values": ["強化後", "体力 +18", "防御 +5"], "cost": ["必要素材: 黒貨 120　月石 2"], "enhance_action": ["強化する"]},

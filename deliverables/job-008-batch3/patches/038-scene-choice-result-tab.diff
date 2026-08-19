@@ -1,0 +1,15 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -147,5 +147,4 @@
+-const ADV_NAME_TAB_SIZE := Vector2(200.0, 50.0)
+-# The tab is attached over the upper edge, while its lower edge remains 12px
+-# above the dialogue body's fixed 32px padding start.
+-const ADV_NAME_TAB_OVERLAP := ADV_DIALOGUE_CONTENT_PADDING - 12.0
++const ADV_NAME_TAB_SIZE := Vector2(200.0, 40.0)
++# Tab top matches scene_quick_row (quick_y = dialogue.y - 16).
++const ADV_NAME_TAB_OVERLAP := ADV_NAME_TAB_SIZE.y - 16.0
+ const ADV_CHOICE_HEIGHT := 72.0
+@@ -159,2 +158,2 @@
+-const ADV_NAME_VERTICAL_PATCH_MARGIN := 20
++const ADV_NAME_VERTICAL_PATCH_MARGIN := 12
+ const ADV_CHOICE_PATCH_MARGIN := 40

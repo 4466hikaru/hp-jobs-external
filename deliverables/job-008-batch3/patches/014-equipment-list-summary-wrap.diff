@@ -1,0 +1,51 @@
+--- a/game/scripts/ui/Stage4EquipmentListPilot.gd
++++ b/game/scripts/ui/Stage4EquipmentListPilot.gd
+@@ -33,7 +33,7 @@
+ 	Rect2(840.0, 166.0, 136.0, 24.0),
+ 	Rect2(840.0, 211.0, 280.0, 22.0),
+ 	Rect2(840.0, 257.0, 280.0, 22.0),
+-	Rect2(840.0, 302.0, 280.0, 22.0),
++	Rect2(840.0, 294.0, 292.0, 44.0),
+ ]
+ 
+ const DEFAULT_STATE := {
+@@ -76,7 +76,7 @@
+ 	var summary_lines: Array = values["selected_summary"] as Array
+ 	for index in range(SUMMARY_LINE_RECTS.size()):
+ 		var value := str(summary_lines[index]) if index < summary_lines.size() else ""
+-		_add_text(view, "ui_text_equipment_list_selected_summary_%02d" % [index + 1], value, SUMMARY_LINE_RECTS[index] as Rect2, 18, _selected_summary_maximum_characters(index), HORIZONTAL_ALIGNMENT_LEFT, 2)
++		_add_text(view, "ui_text_equipment_list_selected_summary_%02d" % [index + 1], value, SUMMARY_LINE_RECTS[index] as Rect2, 18, _selected_summary_maximum_characters(index), HORIZONTAL_ALIGNMENT_LEFT, 2, index == 3)
+ 
+ 	_add_action(view, "ui_text_equipment_list_open_slots_action_01", str(values["open_slots_action"]), DYNAMIC_REGION_RECTS["open_slots_action"], on_open_slots)
+ 	return view
+@@ -120,7 +120,11 @@
+ 
+ 
+ static func _selected_summary_maximum_characters(index: int) -> int:
+-	return SELECTED_SUMMARY_SELECTION_MAXIMUM_CHARACTERS if index == 0 else 17
++	if index == 0:
++		return SELECTED_SUMMARY_SELECTION_MAXIMUM_CHARACTERS
++	if index == 3:
++		return 40
++	return 17
+ 
+ 
+ static func _merged_state(state: Dictionary) -> Dictionary:
+@@ -130,7 +134,7 @@
+ 	return result
+ 
+ 
+-static func _add_text(parent: Control, node_name: String, source_text: String, rect: Rect2, font_size: int, maximum_characters: int, alignment: HorizontalAlignment, outline_size: int) -> void:
++static func _add_text(parent: Control, node_name: String, source_text: String, rect: Rect2, font_size: int, maximum_characters: int, alignment: HorizontalAlignment, outline_size: int, wrap: bool = false) -> void:
+ 	# The outer slot owns the exact ledger rectangle.  Zen's glyph metrics may
+ 	# have a taller natural line box, so the child Label is clipped by this slot
+ 	# instead of growing the intended source rectangle.
+@@ -151,7 +155,7 @@
+ 	label.text = truncate_text(source_text, maximum_characters)
+ 	label.horizontal_alignment = alignment
+ 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+-	label.autowrap_mode = TextServer.AUTOWRAP_OFF
++	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART if wrap else TextServer.AUTOWRAP_OFF
+ 	label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ 	label.clip_text = true
+ 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE

@@ -1,0 +1,11 @@
+--- a/game/scripts/ui/Stage4MassBatch4.gd
++++ b/game/scripts/ui/Stage4MassBatch4.gd
+@@ -87,6 +87,7 @@ const SCREEN_SPECS: Dictionary = {
+ 	"alert_overlay": {
+ 		"strategy": "approved_direct_cutout", "background": "res://assets/ui/ui_mass_batch4_v2/alert_overlay_approved_dynamic_clean_v002.png", "approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/31_短時間通知.png", "comparison_crop": [500, 570, 310, 52], "components": [],
++		"background_masks": [{"id": "alert_spark_overshoot", "rect": [810, 570, 14, 52], "source_rect": [486, 570, 14, 52]}],
+-		"regions": [{"id": "alert_line", "rect": [565, 582, 180, 28], "font_size": 12, "maximum": 14, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large"}],
++		"regions": [{"id": "alert_line", "rect": [564, 588, 180, 28], "font_size": 12, "maximum": 14, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large"}],
+ 		"default_state": {"alert_line": ["月影結晶を獲得"]}, "longest_state": {"alert_line": ["失われた月影結晶を獲得しました"]},
+ 		"static_decorations": [{"id": "alert_crest", "rect": [505, 570, 52, 52]}, {"id": "alert_spark", "rect": [750, 570, 60, 52]}],
+ 	},

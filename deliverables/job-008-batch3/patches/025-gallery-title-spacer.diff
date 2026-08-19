@@ -1,0 +1,15 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -11620,6 +11620,12 @@
+ 	_set_gallery_return_target(return_target)
+ 	run_state = STATE_GALLERY
+ 	_show_menu_shell(_localized_text("gallery.title"), "")
++	# 9-slice top ornament is 64px; heading was sitting in it (job-004 y≈20).
++	var title_lift := Control.new()
++	title_lift.custom_minimum_size = Vector2(1.0, 24.0)
++	title_lift.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	menu_box.add_child(title_lift)
++	menu_box.move_child(title_lift, 0)
+ 	_add_screen_kicker(_localized_text("gallery.kicker"))
+ 	var seen_scene_ids: Array = save_data.get("seenSceneIds", [])
+ 	var unlocked_scenes: Array = []

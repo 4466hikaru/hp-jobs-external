@@ -1,0 +1,37 @@
+--- a/game/scripts/ui/Stage4MassBatch2.gd
++++ b/game/scripts/ui/Stage4MassBatch2.gd
+@@ -42,7 +42,7 @@ const SCREEN_SPECS: Dictionary = {
+ 		"approved_source": "res://../outputs/review/0722_1856_🖼️全画面UI理想案/10_ステージ選択.png",
+ 		"components": [
+ 			{"id": "title", "source_rect": [420, 8, 440, 92], "target_rect": [420, 8, 440, 92], "clear_rects": [[440, 23, 400, 55]]},
+-			{"id": "stage_card_01", "source_rect": [48, 112, 1185, 162], "target_rect": [48, 112, 1185, 162], "clear_rects": [[520, 150, 330, 70], [870, 138, 315, 105]]},
++			{"id": "stage_card_01", "source_rect": [48, 112, 1172, 162], "target_rect": [48, 112, 1172, 162], "clear_rects": [[520, 150, 330, 70], [870, 138, 315, 105]]},
+ 			{"id": "stage_card_02", "source_rect": [48, 280, 1185, 162], "target_rect": [48, 280, 1185, 162], "clear_rects": [[520, 320, 330, 70]]},
+ 			{"id": "stage_card_03", "source_rect": [48, 448, 1185, 162], "target_rect": [48, 448, 1185, 162], "clear_rects": [[520, 488, 330, 70]]},
+ 			{"id": "back_button", "source_rect": [22, 626, 246, 78], "target_rect": [22, 626, 246, 78], "clear_rects": [[78, 640, 150, 45]]},
+@@ -53,7 +53,7 @@ const SCREEN_SPECS: Dictionary = {
+ 			{"id": "stage_cards", "rect": [520, 150, 330, 408], "font_size": 22, "maximum": 14, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_small", "ellipsis_terms": ["礼拝堂", "廃都", "推奨", "報酬"], "slot_rects": [[520, 150, 330, 70], [520, 320, 330, 70], [520, 488, 330, 70]], "component_ids": ["stage_card_01", "stage_card_02", "stage_card_03"]},
+ 			{"id": "detail_panel", "rect": [875, 140, 305, 100], "font_size": 16, "maximum": 16, "rows": 4, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "ellipsis_terms": ["選択中", "推奨", "報酬", "解放"], "slot_rects": [[875, 140, 305, 25], [875, 165, 305, 25], [875, 190, 305, 25], [875, 215, 305, 25]], "component_ids": ["stage_card_01", "stage_card_01", "stage_card_01", "stage_card_01"]},
+ 			{"id": "return_action", "rect": [78, 640, 150, 45], "font_size": 20, "maximum": 4, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["戻る"], "component_ids": ["back_button"]},
+-			{"id": "enter_action", "rect": [875, 638, 350, 48], "font_size": 18, "maximum": 20, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["出撃", "開始"], "component_ids": ["enter_button"]},
++			{"id": "enter_action", "rect": [875, 638, 280, 48], "font_size": 18, "maximum": 20, "rows": 1, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["出撃", "開始"], "component_ids": ["enter_button"]},
+ 		],
+ 		"default_state": {"screen_title": ["ステージ選択"], "stage_cards": ["月影の礼拝堂　危険度 1　報酬: 素材", "灰羽の避難所　危険度 2　報酬: 装備", "血の城塞　危険度 3　解放条件あり"], "detail_panel": ["選択中: 月影の礼拝堂", "推奨 Lv 1", "報酬: 黒貨と素材", "解放済み"], "return_action": ["戻る"], "enter_action": ["出撃する"]},
+ 		"longest_state": {"screen_title": ["出撃ステージを選択してください"], "stage_cards": ["月影の礼拝堂・最深部　危険度 10　報酬傾向: 希少装備", "灰羽の避難所から続く朽ちた街道　危険度 8　報酬: 素材", "血の城塞・終焉の回廊　解放条件: すべての鍵を集める"], "detail_panel": ["選択中: 月影の礼拝堂", "推奨レベル 10", "報酬: 希少装備", "解放条件を確認"], "return_action": ["戻る"], "enter_action": ["この場所へ出撃する"]},
+@@ -374,6 +374,16 @@ static func _add_approved_component_underlays(view: Control, screen_id: String, ba
+ 		underlay.name = "ApprovedComponent_%s" % str(component.get("id", ""))
+ 		underlay.texture = load(component_resource(screen_id, str(component.get("id", "")), baked_default_action_art)) as Texture2D
+ 		underlay.position = Vector2(float(component.get("x", 0)), float(component.get("y", 0)))
++		# The baked top-card PNG is still 1185px; clip to the spec width so the
++		# right remnant is discarded instead of being squashed by STRETCH_SCALE.
++		if screen_id == "stage_select" and str(component.get("id", "")) == "stage_card_01" and underlay.texture != null:
++			var tex_size := underlay.texture.get_size()
++			var target_w := float(component.get("w", 0))
++			if tex_size.x > target_w + 0.5:
++				var atlas := AtlasTexture.new()
++				atlas.atlas = underlay.texture
++				atlas.region = Rect2(0.0, 0.0, target_w, tex_size.y)
++				underlay.texture = atlas
+ 		underlay.size = Vector2(float(component.get("w", 0)), float(component.get("h", 0)))
+ 		underlay.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+ 		underlay.stretch_mode = TextureRect.STRETCH_SCALE

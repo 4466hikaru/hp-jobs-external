@@ -1,0 +1,38 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -7460,7 +7460,7 @@
+ 	run_state = STATE_SAVE_DELETE_CONFIRM
+ 	_show_menu_shell(_localized_text("ui.save_load.delete_confirm.title"), _localized_text("ui.save_load.delete_confirm.subtitle"))
+ 	var slot_summary: Dictionary = _save_load_slot_summary()
+-	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default")
++	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default", HORIZONTAL_ALIGNMENT_CENTER)
+ 	_add_menu_button(_localized_text("ui.save_load.delete_confirm.confirm"), _delete_slot_1_save, "danger")
+ 	_add_menu_button(_localized_text("ui.save_load.delete_confirm.cancel"), _cancel_save_delete_confirm)
+ 
+@@ -14326,7 +14326,7 @@
+ 	_apply_ui_text_outline(button, 2)
+ 
+ 
+-func _add_info_card(title: String, lines: Array, variant: String = "default") -> void:
++func _add_info_card(title: String, lines: Array, variant: String = "default", alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT) -> void:
+ 	var panel := PanelContainer.new()
+ 	panel.custom_minimum_size = Vector2(_menu_content_width(), 92.0)
+ 	panel.add_theme_stylebox_override("panel", _reskin_menu_card_style(variant, 14.0))
+@@ -14338,6 +14338,8 @@
+ 
+ 	var title_label := Label.new()
+ 	title_label.text = title
++	title_label.horizontal_alignment = alignment
++	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ 	title_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ 	title_label.add_theme_font_size_override("font_size", UiSkin.FONT_SIZE_BODY)
+ 	title_label.add_theme_color_override("font_color", RESKIN_TEXT)
+@@ -14348,6 +14350,8 @@
+ 	for line in lines:
+ 		var label := Label.new()
+ 		label.text = str(line)
++		label.horizontal_alignment = alignment
++		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ 		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+ 		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ 		label.clip_text = true

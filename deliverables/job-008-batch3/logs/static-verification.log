@@ -1,0 +1,155 @@
+=== job-008 batch3 static verification 2026-08-19T08:55:17Z (2026-08-19 17:55 JST) ===
+Working tree: gh-api fetched hp-game-share files (not a git clone).
+live HEAD: 92ff9cdc66c9aa588f75b3665d03bc98ceea1527
+live HEAD blobs: Main.gd cf895716 / UiHoverOverlay.gd b9bdaa87
+virtual tree: /tmp/job008-batch3-apply  (git init over fetched files only)
+patches: deliverables/job-008-batch3/patches/ 012 → 039
+excluded: 27_level_up / 28_boss_reward (No. HEAD cluster already ≈640)
+
+--- git apply --check (live HEAD, sequential) ---
+012-shop-soldout-overlap.diff OK
+013-character-select-caption.diff OK
+014-equipment-list-summary-wrap.diff OK
+015-equipment-slots-card-clip.diff OK
+016-equipment-candidates-compare.diff OK
+017-dungeon-info-overlap.diff OK
+018-dungeon-round-choice-width.diff OK
+019-save-load-duplicate-draw.diff OK
+020-save-delete-align.diff OK
+021-enhance-preview-name-break.diff OK
+022-item-detail-actions.diff OK
+023-scene-choice-result-width.diff OK
+024-options-single-chrome.diff OK
+025-gallery-title-spacer.diff OK
+026-system-menu-rows.diff OK
+027-motion-check-qa.diff OK
+028-stage-select-clip.diff OK
+029-world-map-node-snap.diff OK
+030-objective-log-rule.diff OK
+031-town-menu-back-align.diff OK
+032-loading-transition-gap.diff OK
+033-summon-select-header.diff OK
+034-scene-view-wait-inset.diff OK
+035-clear-captions-wrap.diff OK
+036-alert-overlay-align.diff OK
+037-scene-choice-bottom-margin.diff OK
+038-scene-choice-result-tab.diff OK
+039-credits-license-clip.diff OK
+
+--- test_job008_batch3_static.py (live HEAD + batch3 patches) ---
+PASS job-008 batch3 static layout checks
+exit 0
+
+--- test_job008_batch3_static.py (unpatched live HEAD) ---
+FAIL
+ - 012 shop rows must be name + newline + price/stock
+ - 012 Stage4MassBatch3 _add_text_slot must use the complete wrap path
+ - 012 wrap labels must top-align
+ - 012 wrap labels must not trim
+ - 012 Batch3 wrap helper must appear once
+ - 013 missing _center_character_select_button_caption
+ - 013 confirm plate must fill approved rect
+ - 014 summary line 4 must grow to 292x44
+ - 014 _add_text must accept wrap
+ - 015 slot hotspot 1 must move in-frame
+ - 015 must expose the 4th slot hotspot
+ - 015 leftover old 3-slot hotspot
+ - 016 comparison labels must widen to 450
+ - 016 comparison_panel must set autowrap
+ - 017 condition line must break before 続行
+ - 017 summon/cancel must lift off 出発する
+ - 017 leftover old summon rect
+ - 018 choice_detail region must widen to 280x181
+ - 018 leftover old 145-wide choice_detail
+ - 019 missing _suppress_save_load_duplicate_draw
+ - 019 must cover leftover title well
+ - 020 delete confirm card must be centered
+ - 021 missing _prohibit_mid_word_break
+ - 021 CJK names must use WORD JOINER
+ - 021 enhance cost band must widen
+ - 022 item_detail action slots must inset
+ - 023 missing ADV_CHOICE_RESULT_HEIGHT
+ - 023 missing ADV_CHOICE_RESULT_MAX_WIDTH_RATIO
+ - 024 missing _keep_approved_options_nav_focus_only
+ - 024 options nav must set ui_hover_suppress_hover_draw
+ - 024 UiHoverOverlay missing _hover_draw_suppressed
+ - 024 overlay must ignore pointer hover when suppressed
+ - 024 overlay hook must appear once
+ - 025 gallery needs 24px title spacer
+ - 026 system_menu must tighten row gap
+ - 026 system_menu buttons must be 40px
+ - 027 must skip STANDING MOTION QA draw
+ - 027 must opaque-fill the left shell
+ - 028 stage_card_01 must clip to 1172
+ - 028 enter_action must shrink off the red ornament
+ - 029 node draw position must integer-snap
+ - 029 leftover unsnapped node position
+ - 030 missing card03 leftover rule mask
+ - 031 town back_action must recenter in the plate
+ - 032 travel title must collapse space before へ
+ - 032 destination band must widen
+ - 033 summon resource_cost must widen
+ - 034 wait triangle needs extra 20px inset
+ - 035 clear unlock_rows need Batch4 autowrap
+ - 035 unlock slot must grow
+ - 036 missing alert spark overshoot mask
+ - 036 alert_line must drop 6px
+ - 037 missing ADV_DIALOGUE_BOTTOM_MARGIN
+ - 038 name tab height must be 40
+ - 038 name tab overlap must match quick row
+ - 038 leftover 50px name tab
+ - 039 credits must clip leftover scroll line
+exit 1
+(expected: unpatched HEAD must fail these tokens)
+
+--- live HEAD contract tokens still present after batch3 ---
+["画面", "音量", "ゲーム", "戻る"] present
+func _show_run_history present
+_set_ui_screen_id(&"boundary_shop") absent on live HEAD (job-005 not applied; same as PR#8 live-only run)
+_push_ui_screen_overlay(&"return_title_confirm") absent on live HEAD (same)
+
+--- Godot headless ---
+SKIP: Godot is not installed on this box, and hp-game-share is an asset-stripped mirror.
+Cannot run game/tests/test_job008_batch3_layout_headless.gd here.
+That script waits >=0.35s after init (job-005 lesson) before any UI read.
+This batch does not change transition seconds (032 only collapses a title space).
+Must be run on a playable checkout after applying patches.
+
+--- notes ---
+PR#8 branch job/008-ui-defect-code-fixes was not checked out and not committed to.
+PR#9 branch job/008-batch2-high-leftover was not checked out and not committed to.
+jobs/job-008-ui-defect-code-fixes.md status left open.
+game repo was not cloned.
+job-002 was not picked up.
+27/28 patches were discarded (No).
+
+--- patch line endings (must be LF) ---
+012-shop-soldout-overlap.diff: before CR=0 -> after CR=0 LF=66 bytes=8164
+013-character-select-caption.diff: before CR=0 -> after CR=0 LF=41 bytes=2597
+014-equipment-list-summary-wrap.diff: before CR=0 -> after CR=0 LF=51 bytes=2605
+015-equipment-slots-card-clip.diff: before CR=0 -> after CR=0 LF=18 bytes=2732
+016-equipment-candidates-compare.diff: before CR=0 -> after CR=0 LF=11 bytes=4675
+017-dungeon-info-overlap.diff: before CR=0 -> after CR=0 LF=46 bytes=6211
+018-dungeon-round-choice-width.diff: before CR=0 -> after CR=0 LF=11 bytes=1653
+019-save-load-duplicate-draw.diff: before CR=0 -> after CR=0 LF=48 bytes=1997
+020-save-delete-align.diff: before CR=0 -> after CR=0 LF=38 bytes=2028
+021-enhance-preview-name-break.diff: before CR=0 -> after CR=0 LF=47 bytes=4236
+022-item-detail-actions.diff: before CR=0 -> after CR=0 LF=26 bytes=3149
+023-scene-choice-result-width.diff: before CR=0 -> after CR=0 LF=83 bytes=4282
+024-options-single-chrome.diff: before CR=0 -> after CR=0 LF=70 bytes=3781
+025-gallery-title-spacer.diff: before CR=0 -> after CR=0 LF=15 bytes=664
+026-system-menu-rows.diff: before CR=0 -> after CR=0 LF=23 bytes=1110
+027-motion-check-qa.diff: before CR=0 -> after CR=0 LF=23 bytes=1660
+028-stage-select-clip.diff: before CR=0 -> after CR=0 LF=37 bytes=4878
+029-world-map-node-snap.diff: before CR=0 -> after CR=0 LF=11 bytes=684
+030-objective-log-rule.diff: before CR=0 -> after CR=0 LF=20 bytes=987
+031-town-menu-back-align.diff: before CR=0 -> after CR=0 LF=18 bytes=3988
+032-loading-transition-gap.diff: before CR=0 -> after CR=0 LF=27 bytes=3189
+033-summon-select-header.diff: before CR=0 -> after CR=0 LF=11 bytes=2065
+034-scene-view-wait-inset.diff: before CR=0 -> after CR=0 LF=8 bytes=572
+035-clear-captions-wrap.diff: before CR=0 -> after CR=0 LF=30 bytes=2851
+036-alert-overlay-align.diff: before CR=0 -> after CR=0 LF=11 bytes=1251
+037-scene-choice-bottom-margin.diff: before CR=0 -> after CR=0 LF=13 bytes=774
+038-scene-choice-result-tab.diff: before CR=0 -> after CR=0 LF=15 bytes=682
+039-credits-license-clip.diff: before CR=0 -> after CR=0 LF=6 bytes=417
+CR=0 patches=28 total_CR_after=0

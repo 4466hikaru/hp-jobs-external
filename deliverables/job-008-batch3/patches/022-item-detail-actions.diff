@@ -1,0 +1,26 @@
+--- a/game/scripts/ui/Stage4MassBatch2.gd
++++ b/game/scripts/ui/Stage4MassBatch2.gd
+@@ -138,7 +138,7 @@
+ 			{"id": "item_name", "rect": [550, 55, 390, 82], "font_size": 26, "maximum": 14, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "heading_large", "ellipsis_terms": ["月影", "護符", "聖杯", "アイテム"], "component_ids": ["item_title"]},
+ 			{"id": "effect_summary", "rect": [565, 380, 640, 130], "font_size": 18, "maximum": 28, "rows": 3, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "ellipsis_terms": ["効果", "体力", "攻撃", "防御"], "slot_rects": [[565, 380, 640, 40], [565, 430, 640, 40], [565, 480, 640, 40]], "component_ids": ["info_rows", "info_rows", "info_rows"]},
+ 			{"id": "source_info", "rect": [565, 530, 640, 34], "font_size": 17, "maximum": 30, "rows": 1, "kind": "label", "alignment": HORIZONTAL_ALIGNMENT_LEFT, "tier": "body", "ellipsis_terms": ["入手", "カテゴリ", "礼拝堂"], "component_ids": ["info_rows"]},
+-			{"id": "actions", "rect": [535, 595, 720, 55], "font_size": 17, "maximum": 12, "rows": 4, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["戻る", "装備", "売却"], "slot_rects": [[550, 595, 145, 52], [735, 595, 165, 52], [935, 595, 140, 52], [1105, 595, 135, 52]], "component_ids": ["action_01", "action_02", "action_03", "action_04"]},
++			{"id": "actions", "rect": [555, 602, 720, 55], "font_size": 17, "maximum": 12, "rows": 4, "kind": "action_row", "alignment": HORIZONTAL_ALIGNMENT_CENTER, "tier": "button", "ellipsis_terms": ["戻る", "装備", "売却"], "slot_rects": [[566, 602, 145, 52], [751, 602, 165, 52], [951, 602, 140, 52], [1121, 602, 135, 52]], "component_ids": ["action_01", "action_02", "action_03", "action_04"]},
+ 		],
+ 		"default_state": {"item_name": ["月影の護符"], "effect_summary": ["効果: 最大体力を上昇", "分類: 装飾品", "装備可能: 全員"], "source_info": ["入手: 月影の礼拝堂　希少品"], "actions": ["使う", "一つ売却", "保護する", "戻る"]},
+ 		"longest_state": {"item_name": ["月影の礼拝堂に伝わる古い護符"], "effect_summary": ["効果: 最大体力と防御力を大きく上昇", "分類: 希少な装飾品", "装備可能: 選択中の仲間"], "source_info": ["入手先: 月影の礼拝堂・最深部の報酬"], "actions": ["装備する", "一つ売却", "保護する", "戻る"]},
+@@ -421,6 +421,14 @@
+ 		button.text_overrun_behavior = TextServer.OVERRUN_NO_TRIMMING
+ 		button.clip_text = false
+ 		button.tooltip_text = ""
++		if screen_id == "item_detail":
++			var pad := StyleBoxEmpty.new()
++			pad.content_margin_top = 8.0
++			button.add_theme_stylebox_override("normal", pad)
++			button.add_theme_stylebox_override("hover", pad)
++			button.add_theme_stylebox_override("pressed", pad)
++			button.add_theme_stylebox_override("disabled", pad)
++			button.add_theme_stylebox_override("focus", pad)
+ 		_apply_text_theme(button, int(region.get("font_size", 16)), str(region.get("tier", "button")), 3)
+ 		if not visible:
+ 			button.modulate = Color(1.0, 1.0, 1.0, 0.0)
