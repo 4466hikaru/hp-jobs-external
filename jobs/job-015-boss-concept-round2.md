@@ -1,6 +1,6 @@
 # job-015: ボスコンセプトアート第2弾 — 地域ボス「堕ちた姫」以外の中ボス群
 
-- status: open
+- status: in-progress(game)
 - 難度: 高(コンセプトアート。job-002でグレードA実績のある領域)
 - 納品方法: A(branch `job/015` → PR)。画像はdeliverablesへ
 
