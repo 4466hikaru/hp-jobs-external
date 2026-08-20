@@ -1,0 +1,71 @@
+=== job-013 compile/parse check 2026-08-20T23:18Z (2026-08-21 08:18 JST) ===
+Working tree: gh-api fetched hp-game-share files (NOT a git clone of hp-game-share).
+live HEAD: 92ff9cdc66c9aa588f75b3665d03bc98ceea1527
+live blobs: Main.gd cf895716 (25230 lines, size 1019911, CR=0)
+            buffs.json e6a27310 (9570 bytes)
+            dungeons.json 487fbf2d (36171 bytes)
+virtual tree: /workspace/job013-apply-fresh  (git init over fetched files only)
+patches: deliverables/job-013/patches/ 001 then 002
+Godot: not installed on this box. Mirror is asset-stripped (cannot play).
+
+--- 020 accident lesson ---
+git apply --check is NOT enough.
+After apply onto a reconstructed copy of CURRENT Main.gd/JSON, ran:
+  1. jq empty (JSON parse)
+  2. gdparse (gdtoolkit 4.5.0) on Main.gd before AND after
+  3. neighbor-function identity (intended function/table only)
+
+--- git apply --check (live HEAD copy, sequential) ---
+001-player-damage-reduction-cap.diff OK
+002-dungeon-base-carryover-rate.diff OK
+
+--- git apply (same reconstructed tree) ---
+001 OK
+002 OK
+jq empty content/buffs.json OK
+jq empty content/dungeons.json OK
+
+--- gdparse (gdtoolkit 4.5.0 / Python 3.13.5) ---
+unpatched Main.gd: exit 0
+patched   Main.gd: exit 0
+(gdlint not used: pre-existing style noise on 25k-line file would not prove this patch)
+
+--- intended table vs similarly-named neighbor ---
+carryoverCaps keys orig: player.damageMultiplier, player.maxHp, player.moveSpeedMultiplier,
+  player.pickupRadiusMultiplier, player.cooldownMultiplier, player.xpGainMultiplier
+carryoverCaps keys new : + player.damageReduction = 0.5
+other six values byte-identical
+NOT changed: player.damageMultiplier (neighbor name). preferredTargets still lists
+  player.damageReduction (that is the consumer, not the cap table).
+carryoverRules baseCarryoverRate values UNCHANGED (0.1/0.08/0.12/0.1/0.11/0.13)
+
+--- intended function vs similarly-named neighbor ---
+func count unpatched=1518 patched=1518
+_clamp_carryover_target_value: IDENTICAL (8 lines)  -- cap table is JSON, this reader unchanged
+_carryover_value_for_target:   IDENTICAL
+_carryover_rule_by_id:         IDENTICAL
+_carryover_targets_for_rule:   IDENTICAL
+_apply_carryover_target_to_run:IDENTICAL
+_load_content:                 IDENTICAL (still does not load buffs.json)
+_dungeon_carryover_bonus_delta: ONE line
+  - var base_rate := float(rule.get("baseCarryoverRate", 0.1))
+  + var base_rate := float(rule.get("baseCarryoverRate", dungeon.get("baseCarryoverRate", 0.1)))
+Main.gd line count 25230 -> 25230 (substitution, not insert)
+dungeons.json 1284 -> 1289 (+5 explicit keys)
+buffs.json 243 -> 244 (+1 cap key)
+
+--- line ending ---
+patches CR=0, applied JSON/GDScript CR=0, LF only.
+
+RESULT: parse OK, intended table/function changed, neighbors unchanged.
+PASS job-013 static checks
+--- unpatched control (expect FAIL) ---
+FAIL job-013 static checks
+ - carryoverCaps.player.damageReduction must be 0.5
+ - carryoverCaps.player.damageReduction expected 0.5 got None
+ - dungeon.rust_furnace baseCarryoverRate must be 0.1, got None
+ - dungeon.silent_abbey baseCarryoverRate must be 0.1, got None
+ - dungeon.eclipse_observatory baseCarryoverRate must be 0.1, got None
+ - dungeon.grand_cathedral baseCarryoverRate must be 0.1, got None
+ - dungeon.blood_king_castle baseCarryoverRate must be 0.1, got None
+ - _dungeon_carryover_bonus_delta must read dungeon.baseCarryoverRate as fallback after rule

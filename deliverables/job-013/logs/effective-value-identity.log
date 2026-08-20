@@ -1,0 +1,66 @@
+=== job-013 effective-value identity 2026-08-20T23:18Z (2026-08-21 08:18 JST) ===
+Source: live gh-api JSON + Main.gd fallback formula copied from _clamp_carryover_target_value / _dungeon_carryover_bonus_delta
+Unpatched: /workspace/job-013-src (gh api raw)
+Patched: reconstructed tree after 001+002
+
+=== CAP TABLE KEYS ===
+orig {'player.damageMultiplier': 0.5, 'player.maxHp': 100, 'player.moveSpeedMultiplier': 0.25, 'player.pickupRadiusMultiplier': 0.5, 'player.cooldownMultiplier': -0.25, 'player.xpGainMultiplier': 0.5}
+new  {'player.damageMultiplier': 0.5, 'player.maxHp': 100, 'player.moveSpeedMultiplier': 0.25, 'player.pickupRadiusMultiplier': 0.5, 'player.cooldownMultiplier': -0.25, 'player.xpGainMultiplier': 0.5, 'player.damageReduction': 0.5}
+other cap values unchanged OK
+
+=== DR clamp before vs after (buffs LOADED) ===
+  value= -0.1 before=0.0 after=0.0 same=True
+  value=  0.0 before=0.0 after=0.0 same=True
+  value=  0.1 before=0.1 after=0.1 same=True
+  value=  0.5 before=0.5 after=0.5 same=True
+  value= 0.51 before=0.5 after=0.5 same=True
+  value=  1.0 before=0.5 after=0.5 same=True
+  value= 10.0 before=0.5 after=0.5 same=True
+LOADED same
+
+=== DR clamp (buffs NOT loaded, caps={}) ===
+  value= -0.1 before=0.0 after=0.0 same=True
+  value=  0.0 before=0.0 after=0.0 same=True
+  value=  0.1 before=0.1 after=0.1 same=True
+  value=  0.5 before=0.5 after=0.5 same=True
+  value= 0.51 before=0.5 after=0.5 same=True
+  value=  1.0 before=0.5 after=0.5 same=True
+  value= 10.0 before=0.5 after=0.5 same=True
+UNLOADED same
+
+=== other targets still same under new caps ===
+neighbor targets unchanged OK
+
+=== carryoverRules rates UNCHANGED ===
+  carryover.default 0.1
+  carryover.material_focused 0.08
+  carryover.defensive 0.12
+  carryover.offensive 0.1
+  carryover.growth 0.11
+  carryover.final 0.13
+
+=== dungeon baseCarryoverRate field ===
+  dungeon.border_catacomb                  rule=carryover.default            orig_has=False new=<absent>
+  dungeon.direwolf_den                     rule=carryover.default            orig_has=False new=<absent>
+  dungeon.rust_furnace                     rule=carryover.material_focused   orig_has=False new=0.1
+  dungeon.silent_abbey                     rule=carryover.defensive          orig_has=False new=0.1
+  dungeon.eclipse_observatory              rule=carryover.offensive          orig_has=False new=0.1
+  dungeon.grand_cathedral                  rule=carryover.growth             orig_has=False new=0.1
+  dungeon.blood_king_castle                rule=carryover.final              orig_has=False new=0.1
+
+=== base_rate before vs after ===
+dungeon                                   loaded_before  loaded_after  unld_before  unld_after
+dungeon.border_catacomb                             0.1           0.1          0.1         0.1 same=True
+dungeon.direwolf_den                                0.1           0.1          0.1         0.1 same=True
+dungeon.rust_furnace                               0.08          0.08          0.1         0.1 same=True
+dungeon.silent_abbey                               0.12          0.12          0.1         0.1 same=True
+dungeon.eclipse_observatory                         0.1           0.1          0.1         0.1 same=True
+dungeon.grand_cathedral                            0.11          0.11          0.1         0.1 same=True
+dungeon.blood_king_castle                          0.13          0.13          0.1         0.1 same=True
+ALL base_rate identical
+
+CURRENT MIRROR MAIN effective (unloaded) all 7 = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+AFTER patch effective (unloaded) all 7 = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
+5 patched dungeons explicit value [0.1, 0.1, 0.1, 0.1, 0.1]
+2 default still absent ['dungeon.border_catacomb', 'dungeon.direwolf_den']
+VERIFY_OK
