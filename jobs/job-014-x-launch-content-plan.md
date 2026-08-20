@@ -1,6 +1,6 @@
 # job-014: X(Twitter)初出しコンテンツ台本 — 自分のバズ分析を実弾にする
 
-- status: open
+- status: in-progress(game)
 - 難度: 中(企画・調査。コード変更なし)
 - 納品方法: A(branch `job/014` → PR)
 
