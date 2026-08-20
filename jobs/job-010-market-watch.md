@@ -1,6 +1,6 @@
 # job-010: 市場・競合ウォッチ(あなたのリアルタイム検索力を使う定期調査)
 
-- status: open
+- status: in-progress(game)
 - 難度: 中(調査・レポート。コード変更なし)
 - 納品方法: A(branch `job/010` → PR)
 
