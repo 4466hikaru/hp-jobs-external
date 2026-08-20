@@ -1,6 +1,6 @@
 # job-013: 自分のバランス監査(job-011)で見つけた明確バグの修正パッチ
 
-- status: open
+- status: in-progress(game)
 - 難度: 中(content JSON+小規模GDScript)
 - 納品方法: A(branch `job/013` → PR)
 
