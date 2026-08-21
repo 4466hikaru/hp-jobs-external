@@ -1,0 +1,57 @@
+diff --git a/content/dungeons.json b/content/dungeons.json
+index 487fbf2..6c3c4f6 100644
+--- a/content/dungeons.json
++++ b/content/dungeons.json
+@@ -345,6 +345,7 @@
+         "reward.material.rust_scrap"
+       ],
+       "carryoverRuleId": "carryover.material_focused",
++      "baseCarryoverRate": 0.1,
+       "roundMode": true,
+       "roundCount": 3,
+       "roundDurationSeconds": 144,
+@@ -507,6 +508,7 @@
+         "reward.material.sunken_relic"
+       ],
+       "carryoverRuleId": "carryover.defensive",
++      "baseCarryoverRate": 0.1,
+       "roundMode": true,
+       "roundCount": 4,
+       "roundDurationSeconds": 144,
+@@ -705,6 +707,7 @@
+         "reward.material.moon_ice"
+       ],
+       "carryoverRuleId": "carryover.offensive",
++      "baseCarryoverRate": 0.1,
+       "roundMode": true,
+       "roundCount": 4,
+       "roundDurationSeconds": 156,
+@@ -905,6 +908,7 @@
+         "reward.material.capital_sigil"
+       ],
+       "carryoverRuleId": "carryover.growth",
++      "baseCarryoverRate": 0.1,
+       "roundMode": true,
+       "roundCount": 4,
+       "roundDurationSeconds": 168,
+@@ -1105,6 +1109,7 @@
+         "reward.material.blood_shard"
+       ],
+       "carryoverRuleId": "carryover.final",
++      "baseCarryoverRate": 0.1,
+       "roundMode": true,
+       "roundCount": 4,
+       "roundDurationSeconds": 180,
+diff --git a/game/scripts/main/Main.gd b/game/scripts/main/Main.gd
+index cf89571..846f237 100644
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -20975,7 +20975,7 @@ func _dungeon_carryover_bonus_delta(outcome: String, completed_round_count: int,
+ 			depth_ratio = clampf(float(completed_round.get("returnDepthRatio", depth_ratio)), 0.0, 1.0)
+ 	var rule_id := str(stage.get("carryoverRuleId", dungeon.get("carryoverRuleId", "carryover.default")))
+ 	var rule := _carryover_rule_by_id(rule_id)
+-	var base_rate := float(rule.get("baseCarryoverRate", 0.1))
++	var base_rate := float(rule.get("baseCarryoverRate", dungeon.get("baseCarryoverRate", 0.1)))
+ 	var exit_multiplier := float(stage.get("returnCarryoverMultiplier", RoundRules.MIDDLE_RETURN_CARRYOVER_MULTIPLIER))
+ 	if outcome == "clear":
+ 		exit_multiplier = RoundRules.continue_reward_multiplier(int(stage.get("economyDepthCount", rounds_completed)))

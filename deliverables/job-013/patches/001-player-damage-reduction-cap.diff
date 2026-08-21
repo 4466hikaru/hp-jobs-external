@@ -1,0 +1,14 @@
+diff --git a/content/buffs.json b/content/buffs.json
+index e6a2731..7ced510 100644
+--- a/content/buffs.json
++++ b/content/buffs.json
+@@ -6,7 +6,8 @@
+     "player.moveSpeedMultiplier": 0.25,
+     "player.pickupRadiusMultiplier": 0.5,
+     "player.cooldownMultiplier": -0.25,
+-    "player.xpGainMultiplier": 0.5
++    "player.xpGainMultiplier": 0.5,
++    "player.damageReduction": 0.5
+   },
+   "carryoverRules": [
+     {
