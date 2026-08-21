@@ -1,21 +1,111 @@
 --- a/game/scripts/main/Main.gd
 +++ b/game/scripts/main/Main.gd
-@@ -7463,3 +7463,3 @@ func _show_save_delete_confirm
+@@ -7752,47 +7752,55 @@
+ 	_show_title_menu()
+ 	_show_alert(_localized_text("ui.save_load.load_complete.title"), _localized_text("ui.save_load.load_complete.body"), ALERT_DURATION)
+ 
+ 
+ func _show_save_delete_confirm(return_target: String = "title") -> void:
+ 	_push_ui_screen_overlay(&"save_delete_confirm")
+ 	save_load_return_target = return_target
+ 	run_state = STATE_SAVE_DELETE_CONFIRM
+ 	var slot_summary: Dictionary = _save_load_slot_summary()
+ 	if USE_APPROVED_UI_WIRING_B1 and _show_approved_save_delete_confirm(slot_summary):
+ 		return
+ 	_show_menu_shell(_localized_text("ui.save_load.delete_confirm.title"), _localized_text("ui.save_load.delete_confirm.subtitle"))
 -	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default")
 +	_add_info_card(_localized_text("ui.save_load.slot_1.title"), _save_slot_detail_lines(slot_summary), "default", HORIZONTAL_ALIGNMENT_CENTER)
  	_add_menu_button(_localized_text("ui.save_load.delete_confirm.confirm"), _delete_slot_1_save, "danger")
  	_add_menu_button(_localized_text("ui.save_load.delete_confirm.cancel"), _cancel_save_delete_confirm)
-@@ -14329,2 +14329,2 @@ func _add_info_card
+ 
+ 
+ func _show_approved_save_delete_confirm(slot_summary: Dictionary) -> bool:
+ 	var target_rows: Array = [_localized_text("ui.save_load.slot_1.title")]
+ 	for detail_line_value in _save_slot_detail_lines(slot_summary):
+ 		if target_rows.size() >= 3:
+ 			break
+ 		target_rows.append(str(detail_line_value))
+ 	while target_rows.size() < 3:
+ 		target_rows.append("")
+ 	var view := Stage4MassBatch1.build_view("save_delete_confirm", {
+ 		"dialog_title": [_localized_text("ui.save_load.delete_confirm.title")],
+ 		"target_slot": target_rows,
+ 		"actions": [
+ 			_localized_text("ui.save_load.delete_confirm.confirm"),
+ 			_localized_text("ui.save_load.delete_confirm.cancel"),
+ 		],
+ 	})
+ 	if not _install_approved_ui_wiring_b1_view(&"save_delete_confirm", view):
+ 		return false
++	for slot_index in range(1, 4):
++		var slot := view.get_node_or_null("ui_text_save_delete_confirm_target_slot_%02d" % slot_index)
++		if slot == null:
++			continue
++		var value := slot.get_node_or_null("Value") as Label
++		if value != null:
++			value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
++			value.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+ 	var confirm := _bind_approved_ui_wiring_b1_action(view, "ui_text_save_delete_confirm_actions_01", Callable(self, "_delete_slot_1_save"), false, &"danger")
+ 	_bind_approved_ui_wiring_b1_action(view, "ui_text_save_delete_confirm_actions_02", Callable(self, "_cancel_save_delete_confirm"), false, &"back")
+ 	_focus_approved_ui_wiring_b1_button(confirm)
+ 	return true
+ 
+ 
+ func _show_town_title_confirm() -> void:
+ 	_push_ui_screen_overlay(&"return_title_confirm")
+ 	run_state = STATE_TOWN_TITLE_CONFIRM
+ 	_show_menu_shell("タイトルへ戻りますか?", "町での準備内容はそのまま保持されます。")
+ 	_add_menu_button("はい", _transition_confirm_town_return_to_title, "danger")
+ 	_add_menu_button("いいえ", _transition_cancel_town_title_confirm)
+@@ -14970,46 +14978,50 @@
+ 		button.add_theme_stylebox_override("hover", _button_style(Color(0.13, 0.1, 0.22, 0.98), Color(1.0, 0.76, 1.0, 0.72), 2))
+ 		button.add_theme_stylebox_override("pressed", _button_style(Color(0.22, 0.12, 0.28, 1.0), Color(1.0, 0.84, 1.0, 0.86), 2))
+ 		button.add_theme_stylebox_override("focus", _button_style(Color(0.17, 0.12, 0.26, 0.88), Color("#ffd35f"), 2))
+ 		button.add_theme_stylebox_override("disabled", _button_style(Color(0.055, 0.06, 0.09, 0.72), Color(0.34, 0.34, 0.42, 0.45), 1))
+ 	button.add_theme_color_override("font_color", Color("#fff0bc"))
+ 	button.add_theme_color_override("font_hover_color", Color("#ffffff"))
+ 	button.add_theme_color_override("font_pressed_color", Color("#ffffff"))
+ 	button.add_theme_color_override("font_disabled_color", Color(0.68, 0.68, 0.76, 0.58))
+ 	_apply_ui_font(button, true)
+ 	_apply_ui_text_outline(button, 2)
+ 
+ 
 -func _add_info_card(title: String, lines: Array, variant: String = "default") -> void:
 +func _add_info_card(title: String, lines: Array, variant: String = "default", alignment: HorizontalAlignment = HORIZONTAL_ALIGNMENT_LEFT) -> void:
  	var panel := PanelContainer.new()
-@@ -14340,2 +14340,4 @@ func _add_info_card
+ 	panel.custom_minimum_size = Vector2(_menu_content_width(), 92.0)
+ 	panel.add_theme_stylebox_override("panel", _reskin_menu_card_style(variant, 14.0))
+ 	menu_box.add_child(panel)
+ 
+ 	var box := VBoxContainer.new()
+ 	box.add_theme_constant_override("separation", 5)
+ 	panel.add_child(box)
+ 
+ 	var title_label := Label.new()
  	title_label.text = title
 +	title_label.horizontal_alignment = alignment
 +	title_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  	title_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-@@ -14350,2 +14352,4 @@ func _add_info_card
+ 	title_label.add_theme_font_size_override("font_size", UiSkin.FONT_SIZE_BODY)
+ 	title_label.add_theme_color_override("font_color", RESKIN_TEXT)
+ 	_apply_ui_font(title_label, true)
+ 	_apply_ui_text_outline(title_label, 1)
+ 	box.add_child(title_label)
+ 
+ 	for line in lines:
+ 		var label := Label.new()
  		label.text = str(line)
 +		label.horizontal_alignment = alignment
 +		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
  		label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+ 		label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+ 		label.clip_text = true
+ 		label.max_lines_visible = 3
+ 		label.add_theme_font_size_override("font_size", UiSkin.FONT_SIZE_NOTE)
+ 		label.add_theme_color_override("font_color", RESKIN_TEXT_COOL)
+ 		_apply_ui_font(label)
+ 		_apply_ui_text_outline(label, 1)
+ 		box.add_child(label)
+ 
+ 
+ func _add_bottom_command_cards(cards: Array) -> void:
