@@ -1,6 +1,6 @@
 # job-008: 自分のUI総点検指摘のうち「コードで直る分」の一括修正
 
-- status: open
+- status: in-progress(game)
 - 難度: 高(GDScript広範囲。ただし1画面ずつ独立)
 - 納品方法: A(branch `job/008` → PR)。コードはdiffパッチ+テストで納品(ミラーrepo hp-game-share が参照の正)
 

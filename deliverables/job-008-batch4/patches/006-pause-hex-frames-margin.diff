@@ -1,0 +1,31 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10289,9 +10289,25 @@
+ 	_bind_approved_ui_wiring_b2_action(view, "ui_text_pause_pause_actions_02", Callable(self, "_transition_to_objective_log").bind("pause"))
+ 	_bind_approved_ui_wiring_b2_action(view, "ui_text_pause_pause_actions_03", Callable(self, "_transition_to_options").bind("pause"))
+ 	var component_path := "res://assets/ui/ui_mass_batch4_v2/components/pause_options_button_v002.png"
+-	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_save", Rect2(430.0, 486.0, 420.0, 48.0), _localized_text("ui.save_load.menu_button"), Callable(self, "_transition_to_save_load_menu").bind("pause"), component_path)
+-	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_retry", Rect2(430.0, 542.0, 420.0, 48.0), "リトライ", Callable(self, "_retry_current_run_with_transition"), component_path)
+-	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_title", Rect2(430.0, 598.0, 420.0, 48.0), "タイトルへ", Callable(self, "_transition_to_title_menu"), "res://assets/ui/ui_mass_batch4_v2/components/pause_title_button_v002.png", false, &"back")
++	# 設定 sits on the thin title_button crop (340x48). Draw the same hex
++	# 9-slice used by 再開 behind that label (no extra button / hit target).
++	var settings_hex := TextureRect.new()
++	settings_hex.name = "ApprovedB2Component_ui_wiring_b2_pause_options_hex"
++	settings_hex.texture = load(component_path) as Texture2D
++	settings_hex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
++	settings_hex.stretch_mode = TextureRect.STRETCH_SCALE
++	settings_hex.custom_minimum_size = Vector2.ZERO
++	settings_hex.position = Vector2(430.0, 400.0)
++	settings_hex.size = Vector2(420.0, 70.0)
++	settings_hex.mouse_filter = Control.MOUSE_FILTER_IGNORE
++	settings_hex.z_index = -1
++	view.add_child(settings_hex)
++	# 設定 label slot is y=441 h=28 (bottom 469). Extra-button list moves UP.
++	# Previous 006 grew title to 70px downward (y=602 bottom 672). Wrong way.
++	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_save", Rect2(430.0, 470.0, 420.0, 44.0), _localized_text("ui.save_load.menu_button"), Callable(self, "_transition_to_save_load_menu").bind("pause"), component_path)
++	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_retry", Rect2(430.0, 518.0, 420.0, 44.0), "リトライ", Callable(self, "_retry_current_run_with_transition"), component_path)
++	# Title hex 70px at y=566 → bottom 636 (< original 646). Margin 84px vs 74px.
++	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_title", Rect2(430.0, 566.0, 420.0, 70.0), "タイトルへ", Callable(self, "_transition_to_title_menu"), "res://assets/ui/ui_mass_batch4_v2/components/pause_title_button_v002.png", false, &"back")
+ 	_focus_approved_ui_wiring_b2_button(resume)
+ 	return true
+ 

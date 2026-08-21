@@ -1,0 +1,66 @@
+--- a/game/scripts/main/Main.gd
++++ b/game/scripts/main/Main.gd
+@@ -10703,37 +10703,60 @@
+ 	settings_hex.z_index = -1
+ 	view.add_child(settings_hex)
+ 	# 設定 label slot is y=441 h=28 (bottom 469). Extra-button list moves UP.
+ 	# Previous 006 grew title to 70px downward (y=602 bottom 672). Wrong way.
+ 	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_save", Rect2(430.0, 470.0, 420.0, 44.0), _localized_text("ui.save_load.menu_button"), Callable(self, "_transition_to_save_load_menu").bind("pause"), component_path)
+ 	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_retry", Rect2(430.0, 518.0, 420.0, 44.0), "リトライ", Callable(self, "_retry_current_run_with_transition"), component_path)
+ 	# Title hex 70px at y=566 → bottom 636 (< original 646). Margin 84px vs 74px.
+ 	_add_approved_ui_wiring_b2_component_action(view, "ui_wiring_b2_pause_title", Rect2(430.0, 566.0, 420.0, 70.0), "タイトルへ", Callable(self, "_transition_to_title_menu"), "res://assets/ui/ui_mass_batch4_v2/components/pause_title_button_v002.png", false, &"back")
+ 	_focus_approved_ui_wiring_b2_button(resume)
+ 	return true
+ 
+ 
++func _keep_approved_options_nav_focus_only(button: Button) -> void:
++	# Live gold on 画面 is the focus overlay. Extra red on ゲーム is the baked
++	# nav_input crop plus pointer glow (job-004 20_options). Keep one chrome.
++	if button == null:
++		return
++	var empty := StyleBoxEmpty.new()
++	button.add_theme_stylebox_override("normal", empty)
++	button.add_theme_stylebox_override("hover", empty)
++	button.add_theme_stylebox_override("pressed", empty)
++	button.add_theme_stylebox_override("disabled", empty)
++	button.add_theme_stylebox_override("focus", empty)
++	button.set_meta("ui_hover_suppress_hover_draw", true)
++
++
+ func _show_approved_b2_options(settings: Dictionary) -> bool:
+ 	var view := Stage4MassBatch6.build_view("options", _approved_b2_options_category_state(settings))
+ 	view.set_meta("options_category", approved_b2_options_category)
+ 	if not _install_approved_ui_wiring_b2_view(&"options", view):
+ 		return false
+ 	var display_tab := _bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_01", Callable(self, "_select_approved_b2_options_category").bind("display"), false, &"tab", "se.ui.r3.tab")
+-	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_02", Callable(self, "_select_approved_b2_options_category").bind("audio"), false, &"tab", "se.ui.r3.tab")
+-	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_03", Callable(self, "_select_approved_b2_options_category").bind("gameplay"), false, &"tab", "se.ui.r3.tab")
+-	_bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_04", Callable(self, "_return_from_options"), false, &"back")
++	var audio_tab := _bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_02", Callable(self, "_select_approved_b2_options_category").bind("audio"), false, &"tab", "se.ui.r3.tab")
++	var gameplay_tab := _bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_03", Callable(self, "_select_approved_b2_options_category").bind("gameplay"), false, &"tab", "se.ui.r3.tab")
++	var back_tab := _bind_approved_ui_wiring_b2_action(view, "ui_text_options_nav_actions_04", Callable(self, "_return_from_options"), false, &"back")
+ 	# Same content column as the 4 setting rows. Extra categories reuse the
+ 	# approved options layout instead of inventing a new nav rail.
+ 	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_language", Rect2(470.0, 548.0, 185.0, 40.0), "言語・テキスト", Callable(self, "_select_approved_b2_options_category").bind("language"), false, &"tab")
+ 	_add_approved_ui_wiring_b2_text_action(view, "ui_wiring_b2_options_input", Rect2(705.0, 548.0, 205.0, 40.0), "入力設定", Callable(self, "_select_approved_b2_options_category").bind("input"), false, &"tab")
++	# Baked ゲーム crop was captured selected. Reuse the idle 音量 plate.
++	var baked := view.get_node_or_null("ApprovedComponent_options_nav_input") as TextureRect
++	var idle := view.get_node_or_null("ApprovedComponent_options_nav_audio") as TextureRect
++	if baked != null and idle != null and idle.texture != null:
++		baked.texture = idle.texture
++	_keep_approved_options_nav_focus_only(display_tab)
++	_keep_approved_options_nav_focus_only(audio_tab)
++	_keep_approved_options_nav_focus_only(gameplay_tab)
++	_keep_approved_options_nav_focus_only(back_tab)
+ 	_bind_approved_b2_options_setting_actions(view)
+ 	_focus_approved_ui_wiring_b2_button(display_tab)
+ 	return true
+ 
+ 
+ func _select_approved_b2_options_category(category: String) -> void:
+ 	if category == "language":
+ 		_show_language_text_settings(options_return_target)
+ 		return
+ 	if category == "input":
+ 		_show_input_config(options_return_target)
+ 		return
