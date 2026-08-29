@@ -1,5 +1,6 @@
 # job-016: 骸姫地域の雑魚「skeleton_ashen(灰の骨兵)」コンセプト3案
 
+- status: in-progress(game)
 ## 背景と根拠
 - ゲーム側の敵台帳監査(sprite_inventory_0828)で `skeleton_ashen` は death-princess-boss-spec.md に計画例として存在するが、content/enemies.json・assets.json共に未登録=**素材が欠落**している数少ない雑魚枠。
 - 直近の合格実績: job-015の5体(石ゴーレム様式、白背景、装飾抑制)。この様式感覚をそのまま使う。
