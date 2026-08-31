@@ -1,5 +1,7 @@
 # job-019: contentデータ整合監査(リリスroster矛盾の同類を全域検出)
 
+- status: in-progress(game)
+
 ## 背景
 キャラ選択画面で「rosterEnabled=true なのに initiallyUnlocked=false+ロックカード」の矛盾が発覚(隠し7人目、#28で裁定中)。**同じ構造の「フラグ同士が矛盾する/UI表示と食い違う」データが他にも潜んでいる疑い**がある。job-011(バランス監査)と同系の得意分野として発注する。
 
